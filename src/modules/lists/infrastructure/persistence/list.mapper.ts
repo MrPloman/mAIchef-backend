@@ -6,9 +6,7 @@ export class ListMapper {
     return new List(
       schema.id,
       schema.userId,
-      schema.name,
-      schema.description,
-      schema.recipes?.map((r) => r.id) || [],
+      schema.recipeIds || [],
       schema.createdAt,
       schema.updatedAt,
     );
@@ -18,8 +16,7 @@ export class ListMapper {
     return {
       id: list.id,
       userId: list.userId,
-      name: list.name,
-      description: list.description ? list.description : '',
+      recipeIds: list.recipeIds,
       createdAt: list.createdAt,
       updatedAt: list.updatedAt,
     };

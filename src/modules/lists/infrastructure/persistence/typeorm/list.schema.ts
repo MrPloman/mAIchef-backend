@@ -2,41 +2,29 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { UserSchema } from '../../../../auth/infrastructure/persistence/typeorm/user.schema';
-import { RecipeSchema } from '../../../../recipes/infrastructure/persistence/typeorm/recipe.schema';
 
 @Entity('lists')
+@Index(['userId'], { unique: true }) // ⬅️ Un usuario solo puede tener UNA lista
 export class ListSchema {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ name: 'user_id', type: 'uuid' })
+  @Column({ name: 'user_id', type: 'uuid', unique: true })
   userId!: string;
 
   @ManyToOne(() => UserSchema)
   @JoinColumn({ name: 'user_id' })
   user!: UserSchema;
 
-  @Column({ length: 255 })
-  name!: string;
-
-  @Column({ type: 'text', nullable: true })
-  description!: string;
-
-  @ManyToMany(() => RecipeSchema, { eager: true })
-  @JoinTable({
-    name: 'list_recipes',
-    joinColumn: { name: 'list_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'recipe_id', referencedColumnName: 'id' },
-  })
-  recipes!: RecipeSchema[];
+  @Column({ name: 'recipe_ids', type: 'jsonb', default: '[]' })
+  recipeIds!: string[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
