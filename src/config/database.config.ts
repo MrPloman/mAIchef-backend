@@ -7,7 +7,7 @@ export const getDatabaseConfig = (): TypeOrmModuleOptions => ({
   username: process.env.DB_USERNAME || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres123',
   database: process.env.DB_DATABASE || 'maichef_db',
-  autoLoadEntities: true,
-  synchronize: process.env.NODE_ENV === 'development',
-  logging: process.env.NODE_ENV === 'development',
+  autoLoadEntities: true, // ⬅️ Debe estar en true
+  synchronize: true, // ⬅️ Debe estar en true para desarrollo
+  logging: true, // ⬅️ Activa logs para ver qué pasa
 });

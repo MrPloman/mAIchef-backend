@@ -8,5 +8,6 @@ import { UserSchema } from './infrastructure/persistence/typeorm/user.schema';
   imports: [TypeOrmModule.forFeature([UserSchema])],
   controllers: [AuthController],
   providers: [AuthService],
+  exports: [TypeOrmModule],
 })
 export class AuthModule {}
