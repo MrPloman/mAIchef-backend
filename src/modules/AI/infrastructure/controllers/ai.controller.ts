@@ -1,13 +1,14 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { RecipePromptDTO } from '../../application/dto/recipe-prompt.dto';
+import { GenerateRecipeUseCase } from '../../application/use-cases/generate-recipe.use-case';
 
 @Controller('ai')
-export class OpenAIController {
+export class AIController {
+  constructor(private readonly generateRecipeUseCase: GenerateRecipeUseCase) {}
   @Post('generateRecipe')
   async generateRecipe(@Body() body: RecipePromptDTO, @Res() res: Response) {
-    console.log(body);
-    await res.status(300).send('hola');
+    return await this.generateRecipeUseCase.execute(body);
   }
   @Post('replanRecipe')
   public async replanRecipe() {

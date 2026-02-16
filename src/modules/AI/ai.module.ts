@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
-import { OpenAIController } from './infrastructure/controllers/openAI.controller';
-import { OpenAIService } from './infrastructure/services/openAI.service';
-
+import { GenerateRecipeUseCase } from './application/use-cases/generate-recipe.use-case';
+import { OpenAIAdapter } from './infrastructure/adapters/openAI.service';
+import { AIController } from './infrastructure/controllers/ai.controller';
+export const RECIPE_USE_CASES = [GenerateRecipeUseCase];
 @Module({
-  providers: [OpenAIService],
-  controllers: [OpenAIController],
+  providers: [
+    ...RECIPE_USE_CASES,
+    { provide: 'AIRepository', useClass: OpenAIAdapter },
+  ],
+  controllers: [AIController],
 })
 export class AiModule {}
