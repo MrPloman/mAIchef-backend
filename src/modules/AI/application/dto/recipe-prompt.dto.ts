@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { RecipePreferencesDTO } from './recipe-preferences.dto';
 
-export class GenerateRecipePromptDTO {
+export class RecipePromptDTO {
   @IsString()
   @MinLength(10)
   @MaxLength(500)

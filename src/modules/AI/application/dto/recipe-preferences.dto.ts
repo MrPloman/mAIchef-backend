@@ -8,9 +8,12 @@ import {
   Min,
 } from 'class-validator';
 import { CuisineTypeEnum } from '../../domain/enums/cuisine-type.enum';
+import { MealTypeEnum } from '../../domain/enums/meal-type.enum';
+import { RestrictionTypeEnum } from '../../domain/enums/restriction-type.enum';
+import { Duration } from '../../domain/value-objects/duration.vo';
 import { CuisineTypeDTO } from './cuisine-type.dto';
-import { MealType, MealTypeDTO } from './meal-type.dto';
-import { RestrictionType, RestrictionTypeDTO } from './restriction-type.dto';
+import { MealTypeDTO } from './meal-type.dto';
+import { RestrictionTypeDTO } from './restriction-type.dto';
 
 export class RecipePreferencesDTO {
   @IsOptional()
@@ -20,7 +23,7 @@ export class RecipePreferencesDTO {
   @IsOptional()
   @IsArray()
   @Type(() => MealTypeDTO)
-  @IsEnum(MealType, { each: true })
+  @IsEnum(MealTypeEnum, { each: true })
   mealTypes?: MealTypeDTO[];
 
   @IsOptional()
@@ -32,12 +35,12 @@ export class RecipePreferencesDTO {
   @IsOptional()
   @IsArray()
   @Type(() => RestrictionTypeDTO)
-  @IsEnum(RestrictionType, { each: true })
+  @IsEnum(RestrictionTypeEnum, { each: true })
   restrictions?: RestrictionTypeDTO[];
 
   @IsOptional()
   @IsNumber()
   @Min(1)
   @Max(600)
-  maxDuration?: number;
+  maxDuration?: Duration;
 }

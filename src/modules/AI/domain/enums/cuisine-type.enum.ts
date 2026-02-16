@@ -1,6 +1,35 @@
+// domain/enums/cuisine-type.enum.ts
 export enum CuisineTypeEnum {
+  // European
   ITALIAN = 'ITALIAN',
-  MEXICAN = 'MEXICAN',
+  FRENCH = 'FRENCH',
+  SPANISH = 'SPANISH',
+  GREEK = 'GREEK',
+  BRITISH = 'BRITISH',
+  GERMAN = 'GERMAN',
+
+  // Asian
   JAPANESE = 'JAPANESE',
+  CHINESE = 'CHINESE',
   INDIAN = 'INDIAN',
+  THAI = 'THAI',
+  KOREAN = 'KOREAN',
+  VIETNAMESE = 'VIETNAMESE',
+
+  // Americas
+  AMERICAN = 'AMERICAN',
+  MEXICAN = 'MEXICAN',
+  BRAZILIAN = 'BRAZILIAN',
+  CARIBBEAN = 'CARIBBEAN',
+
+  // Middle Eastern & African
+  MEDITERRANEAN = 'MEDITERRANEAN',
+  MIDDLE_EASTERN = 'MIDDLE_EASTERN',
+  MOROCCAN = 'MOROCCAN',
+  ETHIOPIAN = 'ETHIOPIAN',
+  TURKISH = 'TURKISH',
+
+  // Other
+  FUSION = 'FUSION',
+  OTHER = 'OTHER',
 }

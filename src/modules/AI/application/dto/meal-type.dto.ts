@@ -1,15 +1,9 @@
 import { IsArray, IsEnum, IsOptional } from 'class-validator';
-
-export enum MealType {
-  BREAKFAST = 'BREAKFAST',
-  LUNCH = 'LUNCH',
-  DINNER = 'DINNER',
-  SNACK = 'SNACK',
-}
+import { MealTypeEnum } from '../../domain/enums/meal-type.enum';
 
 export class MealTypeDTO {
   @IsOptional()
   @IsArray()
-  @IsEnum(MealType)
-  value!: MealType;
+  @IsEnum(MealTypeEnum, { each: true })
+  value!: MealTypeEnum;
 }

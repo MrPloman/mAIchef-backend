@@ -1,0 +1,26 @@
+// application/mappers/recipe-preferences.mapper.ts
+import { RecipePrompt } from '../../domain/models/recipe-prompt.model';
+import { CuisineType } from '../../domain/value-objects/cuisine-type.vo';
+import { MealType } from '../../domain/value-objects/meal-type.vo';
+import { RestrictionType } from '../../domain/value-objects/restriction-type.vo';
+import { RecipePromptDTO } from '../dto/recipe-prompt.dto';
+
+export class RecipePromptMapper {
+  static toDomain(dto: RecipePromptDTO): RecipePrompt {
+    return {
+      prompt: dto.prompt,
+      preferences: {
+        cuisineType: dto.preferences?.cuisineTypes
+          ?.map((c) => c.value)
+          .flat() as unknown as CuisineType[],
+        mealType: dto.preferences?.mealTypes
+          ?.map((m) => m.value)
+          .flat() as unknown as MealType[],
+        restrictionType: dto.preferences?.restrictions
+          ?.map((r) => r.value)
+          .flat() as unknown as RestrictionType[],
+        maxDuration: dto.preferences?.maxDuration,
+      },
+    };
+  }
+}
