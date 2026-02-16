@@ -1,4 +1,4 @@
-import { IsEnum } from 'class-validator';
+import { IsArray, IsEnum, IsOptional } from 'class-validator';
 
 export enum CuisineType {
   ITALIAN = 'ITALIAN',
@@ -8,6 +8,8 @@ export enum CuisineType {
 }
 
 export class CuisineTypeDTO {
+  @IsOptional()
+  @IsArray()
   @IsEnum(CuisineType)
   value!: CuisineType;
 }

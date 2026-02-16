@@ -1,4 +1,4 @@
-import { IsEnum } from 'class-validator';
+import { IsArray, IsEnum, IsOptional } from 'class-validator';
 
 export enum RestrictionType {
   VEGAN = 'VEGAN',
@@ -9,6 +9,8 @@ export enum RestrictionType {
 }
 
 export class RestrictionTypeDTO {
+  @IsOptional()
+  @IsArray()
   @IsEnum(RestrictionType)
   value!: RestrictionType;
 }
