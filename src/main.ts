@@ -1,8 +1,9 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { config } from 'dotenv';
+import 'dotenv/config'; // Add this line
 import { AppModule } from './app.module';
-config(); // ← Esto DEBE ir primero, antes de cualquier otro import
+config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,7 +22,6 @@ async function bootstrap() {
 
   // Global prefix
   app.setGlobalPrefix('api');
-
   const port = process.env.PORT || 3000;
   await app.listen(port);
 

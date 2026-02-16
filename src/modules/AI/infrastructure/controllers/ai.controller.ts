@@ -8,7 +8,8 @@ export class AIController {
   constructor(private readonly generateRecipeUseCase: GenerateRecipeUseCase) {}
   @Post('generateRecipe')
   async generateRecipe(@Body() body: RecipePromptDTO, @Res() res: Response) {
-    return await this.generateRecipeUseCase.execute(body);
+    const result = await this.generateRecipeUseCase.execute(body);
+    return res.json(result);
   }
   @Post('replanRecipe')
   public async replanRecipe() {

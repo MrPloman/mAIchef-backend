@@ -6,6 +6,7 @@ import { RestrictionType } from '../value-objects/restriction-type.vo';
 export class RecipePrompt {
   prompt!: string;
   preferences?: {
+    servings?: number;
     cuisineType?: CuisineType[];
     mealType?: MealType[];
     restrictionType?: RestrictionType[];

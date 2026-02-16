@@ -10,6 +10,9 @@ export class RecipePromptMapper {
     return {
       prompt: dto.prompt,
       preferences: {
+        servings: dto.preferences?.servings
+          ? Number(dto.preferences.servings)
+          : 1,
         cuisineType: dto.preferences?.cuisineTypes
           ?.map((c) => c.value)
           .flat() as unknown as CuisineType[],
