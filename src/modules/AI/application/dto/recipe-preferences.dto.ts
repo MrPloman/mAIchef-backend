@@ -7,7 +7,8 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { CuisineType, CuisineTypeDTO } from './cuisine-type.dto';
+import { CuisineTypeEnum } from '../../domain/enums/cuisine-type.enum';
+import { CuisineTypeDTO } from './cuisine-type.dto';
 import { MealType, MealTypeDTO } from './meal-type.dto';
 import { RestrictionType, RestrictionTypeDTO } from './restriction-type.dto';
 
@@ -25,7 +26,7 @@ export class RecipePreferencesDTO {
   @IsOptional()
   @IsArray()
   @Type(() => CuisineTypeDTO)
-  @IsEnum(CuisineType, { each: true })
+  @IsEnum(CuisineTypeEnum, { each: true })
   cuisineTypes?: CuisineTypeDTO[];
 
   @IsOptional()
