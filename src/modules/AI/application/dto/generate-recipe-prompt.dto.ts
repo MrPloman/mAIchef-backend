@@ -1,10 +1,20 @@
-import { IsString, MaxLength, MinLength } from 'class-validator';
-import { RecipePreferences } from '../../domain/value-objects/recipe-preferences.vo';
+import { Type } from 'class-transformer';
+import {
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+  ValidateNested,
+} from 'class-validator';
+import { RecipePreferencesDTO } from './recipe-preferences.dto';
 
 export class GenerateRecipePromptDTO {
   @IsString()
   @MinLength(10)
   @MaxLength(500)
   prompt!: string;
-  preferences?: RecipePreferences;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => RecipePreferencesDTO)
+  preferences?: RecipePreferencesDTO;
 }
