@@ -89,11 +89,7 @@ export class GetOpenAIConfig {
 
     const steps = recipeData.steps.map(
       (step) =>
-        new RecipeStep(
-          step.order,
-          step.instruction,
-          step.duration ?? undefined,
-        ),
+        new RecipeStep(step.order, step.instruction, step.duration || 0),
     );
 
     return new Recipe(

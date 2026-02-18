@@ -18,7 +18,11 @@ export class RecipeMapper {
       ),
       schema.steps.map(
         (s) =>
-          new RecipeStep(s.stepNumber, s.instruction, s.estimatedTimeInMinutes),
+          new RecipeStep(
+            s.stepNumber,
+            s.instruction,
+            s.estimatedTimeInMinutes ?? 0,
+          ),
       ),
       schema.createdAt,
       schema.userId,

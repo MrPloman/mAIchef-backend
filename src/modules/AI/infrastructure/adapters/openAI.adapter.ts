@@ -12,10 +12,8 @@ export class OpenAIAdapter implements AIRepository {
   private readonly openai: OpenAI;
 
   constructor(private readonly getOpenAIConfig: GetOpenAIConfig) {
-    const baseURL = this.getOpenAIConfig.getURL();
     const apiKey = this.getOpenAIConfig.getApiKey();
     this.openai = new OpenAI({
-      baseURL,
       apiKey,
     });
   }
@@ -27,12 +25,14 @@ export class OpenAIAdapter implements AIRepository {
     const recipesArraySchema = z.object({
       recipes: z.array(recipeSchema).length(4),
     });
-    console.log(model, systemMessage, userMessage);
     const response = await this.openai.chat.completions.create({
       model: model,
       messages: [
         { role: 'system', content: systemMessage },
-        { role: 'user', content: userMessage },
+        {
+          role: 'user',
+          content: `${userMessage}\n\nIMPORTANT: You must respond with valid JSON only. No explanations, no apologies, no extra text. Just the JSON.`,
+        },
       ],
       temperature: 0.7,
       response_format: { type: 'json_object' },
@@ -47,9 +47,9 @@ export class OpenAIAdapter implements AIRepository {
     const parsedData = JSON.parse(content);
 
     // Validar con Zod
-    const validatedRecipes = recipesArraySchema.parse(parsedData);
+    // const validatedRecipes = recipesArraySchema.parse(parsedData);
 
-    return validatedRecipes.recipes; // ⭐ Retornar el array de recetas
+    return parsedData.recipes; // ⭐ Retornar el array de recetas
   }
 
   async getReplannedRecipe(replannedRecipePrompt: RecipePrompt): Promise<any> {
