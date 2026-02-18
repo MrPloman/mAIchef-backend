@@ -11,9 +11,9 @@ import {
 import { UserSchema } from '../../../../auth/infrastructure/persistence/typeorm/user.schema';
 
 export enum Difficulty {
-  EASY = 'easy',
-  MEDIUM = 'medium',
-  HARD = 'hard',
+  EASY = 'EASY',
+  MEDIUM = 'MEDIUM',
+  HARD = 'HARD',
 }
 
 @Entity('recipes')
