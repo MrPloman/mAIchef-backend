@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Recipe } from 'src/modules/recipes/domain/entities/recipe.entity';
+import { RecipeStep } from 'src/modules/recipes/domain/value-objects/recipe-step.vo';
 import { RecipePrompt } from '../../domain/models/recipe-prompt.model';
+import type { RecipeSchema } from '../schemas/openAI.schema';
 
 @Injectable()
 export class GetOpenAIConfig {
@@ -75,5 +78,37 @@ export class GetOpenAIConfig {
       `;
       return { systemMessage, userMessage };
     }
+  }
+  public toDomainEntity(recipeData: RecipeSchema): Recipe {
+    const ingredients = recipeData.ingredients.map((ing) => ({
+      name: ing.name,
+      quantity: ing.quantity,
+      unit: ing.unit,
+      note: ing.note,
+    }));
+
+    const steps = recipeData.steps.map(
+      (step) =>
+        new RecipeStep(
+          step.order,
+          step.instruction,
+          step.duration ?? undefined,
+        ),
+    );
+
+    return new Recipe(
+      recipeData._id,
+      recipeData.version,
+      recipeData.title,
+      recipeData.description,
+      recipeData.difficulty as unknown as any,
+      recipeData.estimatedTimeInMinutes,
+      recipeData.servings,
+      ingredients as unknown as any[],
+      steps,
+      new Date(recipeData.createdAt),
+      recipeData.userId ?? undefined,
+      recipeData.parentRecipeId ?? undefined,
+    );
   }
 }

@@ -1,14 +1,15 @@
 export class Unit {
   private static readonly allowedUnits = [
-    'g',
-    'kg',
-    'ml',
-    'l',
-    'tsp',
-    'tbsp',
-    'cup',
-    'unit',
-    'slice',
+    'G',
+    'KG',
+    'ML',
+    'L',
+    'CUP',
+    'TBSP',
+    'TSP',
+    'UNIT',
+    'SLICE',
+    'PIECE',
   ];
 
   constructor(private readonly value: string) {

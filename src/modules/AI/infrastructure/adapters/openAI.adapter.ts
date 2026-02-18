@@ -1,8 +1,10 @@
 // infrastructure/adapters/openai-ai.adapter.ts
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai'; // Make sure to: npm install openai
+import z from 'zod';
 import { RecipePrompt } from '../../domain/models/recipe-prompt.model';
 import { AIRepository } from '../../domain/ports/ai.repository';
+import { recipeSchema } from '../schemas/openAI.schema';
 import { GetOpenAIConfig } from '../services/openai.service';
 
 @Injectable()
@@ -22,7 +24,10 @@ export class OpenAIAdapter implements AIRepository {
     const { systemMessage, userMessage } =
       this.getOpenAIConfig.getPromptTemplate(generateRecipePrompt);
     const model = this.getOpenAIConfig.getModel();
-    const recipeSchema = undefined;
+    const recipesArraySchema = z.object({
+      recipes: z.array(recipeSchema).length(4),
+    });
+    console.log(model, systemMessage, userMessage);
     const response = await this.openai.chat.completions.create({
       model: model,
       messages: [
@@ -30,10 +35,21 @@ export class OpenAIAdapter implements AIRepository {
         { role: 'user', content: userMessage },
       ],
       temperature: 0.7,
+      response_format: { type: 'json_object' },
     });
-    const validatedRecipes = response.choices[0].message.content;
+    const content = response.choices[0].message.content;
 
-    return validatedRecipes;
+    if (!content) {
+      throw new Error('OpenAI returned empty content');
+    }
+
+    // Parse el JSON manualmente
+    const parsedData = JSON.parse(content);
+
+    // Validar con Zod
+    const validatedRecipes = recipesArraySchema.parse(parsedData);
+
+    return validatedRecipes.recipes; // ⭐ Retornar el array de recetas
   }
 
   async getReplannedRecipe(replannedRecipePrompt: RecipePrompt): Promise<any> {

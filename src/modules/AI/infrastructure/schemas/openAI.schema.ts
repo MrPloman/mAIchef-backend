@@ -1,32 +1,32 @@
 import { z } from 'zod';
 
-export const difficultySchema = z.enum(['easy', 'medium', 'hard']);
+export const difficultySchema = z.enum(['EASY', 'MEDIUM', 'HARD']);
 
 export const ingredientSchema = z.object({
   name: z.string(),
-  quantity: z.number().optional(),
+  quantity: z.number().nullable(),
   unit: z
     .enum([
-      'g',
-      'kg',
-      'ml',
-      'l',
-      'cup',
-      'tbsp',
-      'tsp',
-      'unit',
-      'slice',
-      'piece',
+      'G',
+      'KG',
+      'ML',
+      'L',
+      'CUP',
+      'TBSP',
+      'TSP',
+      'UNIT',
+      'SLICE',
+      'PIECE',
     ])
-    .optional(),
-  note: z.string().optional(),
+    .nullable(),
+  note: z.string().nullable(),
 });
 
 export const recipeStepSchema = z.object({
   order: z.number(),
   instruction: z.string(),
-  duration: z.number().optional(),
-  tips: z.array(z.string()).optional(),
+  duration: z.number().nullable(),
+  tips: z.array(z.string()).nullable(),
 });
 
 export const recipeSchema = z.object({
@@ -40,14 +40,17 @@ export const recipeSchema = z.object({
   ingredients: z.array(ingredientSchema),
   steps: z.array(recipeStepSchema),
   createdAt: z.string().datetime(),
-  userId: z.string().optional(),
-  parentRecipeId: z.string().optional(),
+  userId: z.string().nullable(),
+  parentRecipeId: z.string().nullable(),
 });
 
-export const recipesArraySchema = z.array(recipeSchema).length(4);
+export const recipesResponseSchema = z.object({
+  recipes: z.array(recipeSchema).length(4),
+});
 
 // Types inferidos
 export type RecipeSchema = z.infer<typeof recipeSchema>;
 export type IngredientSchema = z.infer<typeof ingredientSchema>;
 export type RecipeStepSchema = z.infer<typeof recipeStepSchema>;
 export type Difficulty = z.infer<typeof difficultySchema>;
+export type RecipesResponse = z.infer<typeof recipesResponseSchema>;

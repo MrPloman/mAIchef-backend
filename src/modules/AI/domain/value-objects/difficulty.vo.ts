@@ -1,12 +1,12 @@
 export class Difficulty {
   private constructor(private readonly value: string) {}
 
-  static EASY = new Difficulty('easy');
-  static MEDIUM = new Difficulty('medium');
-  static HARD = new Difficulty('hard');
+  static EASY = new Difficulty('EASY');
+  static MEDIUM = new Difficulty('MEDIUM');
+  static HARD = new Difficulty('HARD');
 
   static from(value: string): Difficulty {
-    const allowed = ['easy', 'medium', 'hard'];
+    const allowed = ['EASY', 'MEDIUM', 'HARD'];
 
     if (!allowed.includes(value)) {
       throw new Error(`Invalid difficulty: ${value}`);
