@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Recipe } from 'src/modules/recipes/domain/entities/recipe.entity';
+import { Duration } from 'src/modules/recipes/domain/value-objects/duration.vo';
 import { RecipeStep } from 'src/modules/recipes/domain/value-objects/recipe-step.vo';
+import { StepInstruction } from 'src/modules/recipes/domain/value-objects/step-instruction.vo';
+import { StepOrder } from 'src/modules/recipes/domain/value-objects/step-order.vo';
 import { RecipePrompt } from '../../domain/models/recipe-prompt.model';
 import type { RecipeSchema } from '../schemas/openAI.schema';
 
@@ -89,7 +92,11 @@ export class GetOpenAIConfig {
 
     const steps = recipeData.steps.map(
       (step) =>
-        new RecipeStep(step.order, step.instruction, step.duration || 0),
+        new RecipeStep(
+          step.order as unknown as StepOrder,
+          step.instruction as unknown as StepInstruction,
+          step.duration as unknown as Duration,
+        ),
     );
 
     return new Recipe(

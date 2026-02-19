@@ -1,7 +1,10 @@
+import { IngredientName } from './ingredient-name.vo';
+import { Quantity } from './quantity.vo';
+
 export class Ingredient {
   constructor(
-    public readonly name: string,
-    public readonly quantity: number,
+    public readonly name: IngredientName,
+    public readonly quantity: Quantity,
     public readonly unit: string,
     public readonly notes?: string,
   ) {}

@@ -1,4 +1,4 @@
-import { RestrictionTypeEnum } from '../enums/restriction-type.enum';
+import { RestrictionTypeEnum } from 'src/modules/AI/domain/enums/restriction-type.enum';
 
 export class RestrictionType {
   private constructor(private readonly value: RestrictionTypeEnum) {}

@@ -19,7 +19,7 @@ export enum Difficulty {
 @Entity('recipes')
 export class RecipeSchema {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+  _id!: string;
 
   @VersionColumn()
   version!: number;
@@ -43,36 +43,37 @@ export class RecipeSchema {
   @Column()
   servings!: number;
 
-  // Guardamos ingredients como JSON
+  // Store ingredients as JSON: { name: string, quantity: number, unit: string, notes?: string }
   @Column({ type: 'jsonb' })
-  ingredients!: {
+  ingredients!: Array<{
     name: string;
     quantity: number;
     unit: string;
     notes?: string;
-  }[];
+  }>;
 
-  // Guardamos steps como JSON
+  // Store steps as JSON: { order: number, instruction: string, duration?: number, tips?: string[] }
   @Column({ type: 'jsonb' })
-  steps!: {
-    stepNumber: number;
+  steps!: Array<{
+    order: number;
     instruction: string;
-    estimatedTimeInMinutes?: number;
-  }[];
+    duration?: number;
+    tips?: string[];
+  }>;
 
   @Column({ name: 'user_id', type: 'uuid', nullable: true })
-  userId!: string;
+  userId?: string;
 
   @ManyToOne(() => UserSchema, { nullable: true })
   @JoinColumn({ name: 'user_id' })
-  user!: UserSchema;
+  user?: UserSchema;
 
   @Column({ name: 'parent_recipe_id', type: 'uuid', nullable: true })
-  parentRecipeId!: string;
+  parentRecipeId?: string;
 
   @ManyToOne(() => RecipeSchema, { nullable: true })
   @JoinColumn({ name: 'parent_recipe_id' })
-  parentRecipe!: RecipeSchema;
+  parentRecipe?: RecipeSchema;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;

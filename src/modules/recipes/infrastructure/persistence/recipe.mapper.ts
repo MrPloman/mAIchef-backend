@@ -1,27 +1,34 @@
 import { Recipe } from '../../domain/entities/recipe.entity';
-import { Ingredient } from '../../domain/value-objects/ingredient.vo';
+import { Duration } from '../../domain/value-objects/duration.vo';
+import { IngredientName } from '../../domain/value-objects/ingredient-name.vo';
+import { Quantity } from '../../domain/value-objects/quantity.vo';
 import { RecipeStep } from '../../domain/value-objects/recipe-step.vo';
+import { StepInstruction } from '../../domain/value-objects/step-instruction.vo';
+import { StepOrder } from '../../domain/value-objects/step-order.vo';
 import { RecipeSchema } from './typeorm/recipe.schema';
 
 export class RecipeMapper {
   static toDomain(schema: RecipeSchema): Recipe {
     return new Recipe(
-      schema.id,
+      schema._id,
       schema.version,
       schema.title,
       schema.description,
       schema.difficulty,
       schema.estimatedTimeInMinutes,
       schema.servings,
-      schema.ingredients.map(
-        (i) => new Ingredient(i.name, i.quantity, i.unit, i.notes),
-      ),
+      schema.ingredients.map((i) => ({
+        name: new IngredientName(i.name),
+        quantity: new Quantity(i.quantity),
+        unit: typeof i.unit === 'string' ? i.unit : (i.unit as any).getValue(),
+        notes: i.notes,
+      })),
       schema.steps.map(
         (s) =>
           new RecipeStep(
-            s.stepNumber,
-            s.instruction,
-            s.estimatedTimeInMinutes ?? 0,
+            s.order as unknown as StepOrder,
+            s.instruction as unknown as StepInstruction,
+            s.duration as unknown as Duration,
           ),
       ),
       schema.createdAt,
@@ -32,7 +39,7 @@ export class RecipeMapper {
 
   static toSchema(recipe: Recipe): Partial<RecipeSchema> {
     return {
-      id: recipe._id,
+      _id: recipe._id,
       version: recipe.version,
       title: recipe.title,
       description: recipe.description,
@@ -40,15 +47,15 @@ export class RecipeMapper {
       estimatedTimeInMinutes: recipe.estimatedTimeInMinutes,
       servings: recipe.servings,
       ingredients: recipe.ingredients.map((i) => ({
-        name: i.name,
-        quantity: i.quantity,
-        unit: i.unit,
-        notes: i.notes,
+        name: i.name.getValue(),
+        quantity: i.quantity.getValue(),
+        unit: typeof i.unit === 'string' ? i.unit : (i.unit as any).getValue(),
+        notes: i.notes ?? undefined,
       })),
       steps: recipe.steps.map((s) => ({
-        stepNumber: s.stepNumber,
-        instruction: s.instruction,
-        estimatedTimeInMinutes: s.estimatedTimeInMinutes,
+        order: s.order.getValue(),
+        instruction: s.instruction.getValue(),
+        duration: s.duration?.getValue() ?? 0,
       })),
       createdAt: recipe.createdAt,
       userId: recipe.userId,
