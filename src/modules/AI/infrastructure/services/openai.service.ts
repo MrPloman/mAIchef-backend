@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Recipe } from 'src/modules/recipes/domain/entities/recipe.entity';
+import { Difficulty } from 'src/modules/recipes/domain/value-objects/difficulty.vo';
 import { Duration } from 'src/modules/recipes/domain/value-objects/duration.vo';
+import { IngredientName } from 'src/modules/recipes/domain/value-objects/ingredient-name.vo';
+import { Ingredient } from 'src/modules/recipes/domain/value-objects/ingredient.vo';
+import { Quantity } from 'src/modules/recipes/domain/value-objects/quantity.vo';
 import { RecipeStep } from 'src/modules/recipes/domain/value-objects/recipe-step.vo';
 import { StepInstruction } from 'src/modules/recipes/domain/value-objects/step-instruction.vo';
 import { StepOrder } from 'src/modules/recipes/domain/value-objects/step-order.vo';
 import { RecipePrompt } from '../../domain/models/recipe-prompt.model';
+import { Unit } from '../../domain/value-objects/unit.vo';
 import type { RecipeSchema } from '../schemas/openAI.schema';
 
 @Injectable()
@@ -44,7 +49,7 @@ export class GetOpenAIConfig {
 
     {
       const systemMessage = `
-                You are a culinary expert that generates recipe data. You must return exactly 4 different recipes that match the user's requirements.
+                You are a culinary expert that generates recipe data. You must return exactly 1 different recipes that match the user's requirements.
                 Each recipe must include:
                 - A unique _id in format "recipe-[uuid]"
                 - version: 1
@@ -83,12 +88,15 @@ export class GetOpenAIConfig {
     }
   }
   public toDomainEntity(recipeData: RecipeSchema): Recipe {
-    const ingredients = recipeData.ingredients.map((ing) => ({
-      name: ing.name,
-      quantity: ing.quantity,
-      unit: ing.unit,
-      note: ing.note,
-    }));
+    const ingredients = recipeData.ingredients.map(
+      (ing) =>
+        new Ingredient(
+          new IngredientName(ing.name),
+          new Quantity(ing.quantity ? Number(ing.quantity) : 0),
+          new Unit(ing.unit ?? '').getValue(),
+          ing.note ?? undefined,
+        ),
+    );
 
     const steps = recipeData.steps.map(
       (step) =>
@@ -104,10 +112,10 @@ export class GetOpenAIConfig {
       recipeData.version,
       recipeData.title,
       recipeData.description,
-      recipeData.difficulty as unknown as any,
+      recipeData.difficulty.toLowerCase() as Difficulty,
       recipeData.estimatedTimeInMinutes,
       recipeData.servings,
-      ingredients as unknown as any[],
+      ingredients,
       steps,
       new Date(recipeData.createdAt),
       recipeData.userId ?? undefined,

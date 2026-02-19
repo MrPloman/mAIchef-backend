@@ -1,10 +1,17 @@
 import { z } from 'zod';
 
-export const difficultySchema = z.enum(['EASY', 'MEDIUM', 'HARD']);
+// ⭐ Transform para convertir a mayúsculas
+export const difficultySchema = z
+  .enum(['EASY', 'MEDIUM', 'HARD'])
+  .or(
+    z
+      .enum(['easy', 'medium', 'hard'])
+      .transform((val) => val.toUpperCase() as 'EASY' | 'MEDIUM' | 'HARD'),
+  );
 
 export const ingredientSchema = z.object({
   name: z.string(),
-  quantity: z.number().nullable(),
+  quantity: z.number().nullable().optional(),
   unit: z
     .enum([
       'G',
@@ -18,15 +25,32 @@ export const ingredientSchema = z.object({
       'SLICE',
       'PIECE',
     ])
-    .nullable(),
-  note: z.string().nullable(),
+    .or(
+      z
+        .enum([
+          'g',
+          'kg',
+          'ml',
+          'l',
+          'cup',
+          'tbsp',
+          'tsp',
+          'unit',
+          'slice',
+          'piece',
+        ])
+        .transform((val) => val.toUpperCase() as any),
+    )
+    .nullable()
+    .optional(),
+  note: z.string().nullable().optional(),
 });
 
 export const recipeStepSchema = z.object({
   order: z.number(),
   instruction: z.string(),
-  duration: z.number().nullable(),
-  tips: z.array(z.string()).nullable(),
+  duration: z.coerce.number().nullable().optional(),
+  tips: z.array(z.string()).nullable().optional(),
 });
 
 export const recipeSchema = z.object({
@@ -40,12 +64,13 @@ export const recipeSchema = z.object({
   ingredients: z.array(ingredientSchema),
   steps: z.array(recipeStepSchema),
   createdAt: z.string().datetime(),
-  userId: z.string().nullable(),
-  parentRecipeId: z.string().nullable(),
+  userId: z.string().nullable().optional(),
+  parentRecipeId: z.string().nullable().optional(),
 });
 
+// ⭐ CAMBIO: min(1).max(4) en lugar de .length(4) exacto
 export const recipesResponseSchema = z.object({
-  recipes: z.array(recipeSchema).length(4),
+  recipes: z.array(recipeSchema).min(1).max(4),
 });
 
 // Types inferidos

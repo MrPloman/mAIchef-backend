@@ -23,7 +23,7 @@ export class OpenAIAdapter implements AIRepository {
       this.getOpenAIConfig.getPromptTemplate(generateRecipePrompt);
     const model = this.getOpenAIConfig.getModel();
     const recipesArraySchema = z.object({
-      recipes: z.array(recipeSchema).length(4),
+      recipes: z.array(recipeSchema).length(1),
     });
     const response = await this.openai.chat.completions.create({
       model: model,
@@ -45,6 +45,8 @@ export class OpenAIAdapter implements AIRepository {
 
     // Parse el JSON manualmente
     const parsedData = JSON.parse(content);
+    const validatedResponse = recipesArraySchema.parse(parsedData);
+    console.log(validatedResponse);
 
     // Validar con Zod
     // const validatedRecipes = recipesArraySchema.parse(parsedData);
