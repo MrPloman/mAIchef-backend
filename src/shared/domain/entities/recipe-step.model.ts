@@ -6,7 +6,7 @@ export class RecipeStep {
   constructor(
     public readonly order: StepOrder,
     public readonly instruction: StepInstruction,
-    public readonly duration?: Duration,
+    public readonly duration: Duration,
     public readonly tips?: string[],
   ) {}
 

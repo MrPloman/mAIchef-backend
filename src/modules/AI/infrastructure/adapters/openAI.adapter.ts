@@ -1,6 +1,8 @@
 // infrastructure/adapters/openai-ai.adapter.ts
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai'; // Make sure to: npm install openai
+import { maxRecipes } from 'src/shared/constants';
+import { RecipeMapper } from 'src/shared/infrastructure/recipe.mapper';
 import z from 'zod';
 import { RecipePrompt } from '../../domain/models/recipe-prompt.model';
 import { AIRepository } from '../../domain/ports/ai.repository';
@@ -23,7 +25,7 @@ export class OpenAIAdapter implements AIRepository {
       this.getOpenAIConfig.getPromptTemplate(generateRecipePrompt);
     const model = this.getOpenAIConfig.getModel();
     const recipesArraySchema = z.object({
-      recipes: z.array(recipeSchema).length(1),
+      recipes: z.array(recipeSchema).length(maxRecipes),
     });
     const response = await this.openai.chat.completions.create({
       model: model,
@@ -46,12 +48,13 @@ export class OpenAIAdapter implements AIRepository {
     // Parse el JSON manualmente
     const parsedData = JSON.parse(content);
     const validatedResponse = recipesArraySchema.parse(parsedData);
-    console.log(validatedResponse);
 
     // Validar con Zod
     // const validatedRecipes = recipesArraySchema.parse(parsedData);
 
-    return parsedData.recipes; // ⭐ Retornar el array de recetas
+    return validatedResponse.recipes.map((recipeData: any) =>
+      RecipeMapper.fromOpenAI(recipeData),
+    );
   }
 
   async getReplannedRecipe(replannedRecipePrompt: RecipePrompt): Promise<any> {

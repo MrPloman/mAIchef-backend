@@ -18,7 +18,7 @@ export const ingredientSchema = z.object({
 export const recipeStepSchema = z.object({
   order: z.number(),
   instruction: z.string(),
-  duration: z.coerce.number().nullable().optional(),
+  duration: z.coerce.number(),
   tips: z.array(z.string()).nullable().optional(),
 });
 

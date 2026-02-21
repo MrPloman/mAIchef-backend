@@ -1,5 +1,4 @@
 import { DifficultyTypeEnum } from 'src/shared/domain/enums/difficulty-type.enum';
-import { Difficulty } from 'src/shared/domain/value-objects/difficulty.vo';
 import { IngredientName } from 'src/shared/domain/value-objects/ingredient-name.vo';
 import { Quantity } from 'src/shared/domain/value-objects/quantity.vo';
 import { Unit } from 'src/shared/domain/value-objects/unit.vo';
@@ -34,7 +33,7 @@ export class RecipeSchema {
     enum: DifficultyTypeEnum,
     default: DifficultyTypeEnum.MEDIUM,
   })
-  difficulty!: Difficulty;
+  difficulty!: DifficultyTypeEnum;
 
   @Column({ name: 'estimated_time_in_minutes' })
   estimatedTimeInMinutes!: number;
