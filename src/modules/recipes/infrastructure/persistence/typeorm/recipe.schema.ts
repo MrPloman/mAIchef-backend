@@ -1,3 +1,5 @@
+import { DifficultyTypeEnum } from 'src/shared/domain/enums/difficulty-type.enum';
+import { Difficulty } from 'src/shared/domain/value-objects/difficulty.vo';
 import { IngredientName } from 'src/shared/domain/value-objects/ingredient-name.vo';
 import { Quantity } from 'src/shared/domain/value-objects/quantity.vo';
 import { Unit } from 'src/shared/domain/value-objects/unit.vo';
@@ -12,12 +14,6 @@ import {
   VersionColumn,
 } from 'typeorm';
 import { UserSchema } from '../../../../auth/infrastructure/persistence/typeorm/user.schema';
-
-export enum Difficulty {
-  EASY = 'EASY',
-  MEDIUM = 'MEDIUM',
-  HARD = 'HARD',
-}
 
 @Entity('recipes')
 export class RecipeSchema {
@@ -35,8 +31,8 @@ export class RecipeSchema {
 
   @Column({
     type: 'enum',
-    enum: Difficulty,
-    default: Difficulty.MEDIUM,
+    enum: DifficultyTypeEnum,
+    default: DifficultyTypeEnum.MEDIUM,
   })
   difficulty!: Difficulty;
 
@@ -49,9 +45,9 @@ export class RecipeSchema {
   // Store ingredients as JSON: { name: string, quantity: number, unit: string, notes?: string }
   @Column({ type: 'jsonb' })
   ingredients!: Array<{
-    name: IngredientName['value'];
-    quantity: Quantity;
-    unit: Unit;
+    name: IngredientName;
+    quantity?: Quantity;
+    unit?: Unit;
     notes?: string;
   }>;
 

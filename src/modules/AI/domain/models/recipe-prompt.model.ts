@@ -1,7 +1,7 @@
-import { CuisineType } from '../value-objects/cuisine-type.vo';
-import { Duration } from '../value-objects/duration.vo';
-import { MealType } from '../value-objects/meal-type.vo';
-import { RestrictionType } from '../value-objects/restriction-type.vo';
+import { CuisineType } from 'src/shared/domain/value-objects/cuisine-type.vo';
+import { Duration } from 'src/shared/domain/value-objects/duration.vo';
+import { MealType } from 'src/shared/domain/value-objects/meal-type.vo';
+import { RestrictionType } from 'src/shared/domain/value-objects/restriction-type.vo';
 
 export class RecipePrompt {
   prompt!: string;

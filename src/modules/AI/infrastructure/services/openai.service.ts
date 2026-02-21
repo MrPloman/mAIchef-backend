@@ -1,21 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { RecipeSchema } from 'src/modules/recipes/infrastructure/persistence/typeorm/recipe.schema';
 import { maxRecipes } from 'src/shared/constants';
-import { RecipeStep } from 'src/shared/domain/entities/recipe-step.model';
-import { Recipe } from 'src/shared/domain/entities/recipe.entity';
-import { Duration } from 'src/shared/domain/value-objects/duration.vo';
-import { IngredientName } from 'src/shared/domain/value-objects/ingredient-name.vo';
-import { Ingredient } from 'src/shared/domain/value-objects/ingredient.vo';
-import { Quantity } from 'src/shared/domain/value-objects/quantity.vo';
-import { StepInstruction } from 'src/shared/domain/value-objects/step-instruction.vo';
-import { StepOrder } from 'src/shared/domain/value-objects/step-order.vo';
-import { Unit } from 'src/shared/domain/value-objects/unit.vo';
+import { RecipeMapper } from 'src/shared/infrastructure/recipe.mapper';
 import { RecipePrompt } from '../../domain/models/recipe-prompt.model';
 
 @Injectable()
 export class GetOpenAIConfig {
   constructor(private readonly configService: ConfigService) {}
+  private readonly recipeMapper = new RecipeMapper();
   public getURL() {
     return (
       this.configService.get<string>('OPENAI_API_URL')! ||
@@ -86,40 +78,5 @@ export class GetOpenAIConfig {
       `;
       return { systemMessage, userMessage };
     }
-  }
-  public toDomainEntity(recipeData: RecipeSchema): Recipe {
-    const ingredients = recipeData.ingredients.map(
-      (ing) =>
-        new Ingredient(
-          new IngredientName(ing.name),
-          new Quantity(ing.quantity ? Number(ing.quantity) : 0),
-          new Unit((ing.unit as Unit).getValue()),
-          ing.notes ?? undefined,
-        ),
-    );
-
-    const steps = recipeData.steps.map(
-      (step) =>
-        new RecipeStep(
-          step.order as unknown as StepOrder,
-          step.instruction as unknown as StepInstruction,
-          step.duration as unknown as Duration,
-        ),
-    );
-
-    return new Recipe(
-      recipeData._id,
-      recipeData.version,
-      recipeData.title,
-      recipeData.description,
-      recipeData.difficulty as unknown as Recipe['difficulty'],
-      recipeData.estimatedTimeInMinutes,
-      recipeData.servings,
-      ingredients,
-      steps,
-      new Date(recipeData.createdAt),
-      recipeData.userId ?? undefined,
-      recipeData.parentRecipeId ?? undefined,
-    );
   }
 }

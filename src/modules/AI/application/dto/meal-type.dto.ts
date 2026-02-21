@@ -1,5 +1,5 @@
 import { IsArray, IsEnum, IsOptional } from 'class-validator';
-import { MealTypeEnum } from '../../../auth/domain/enums/meal-type.enum';
+import { MealTypeEnum } from '../../../../shared/domain/enums/meal-type.enum';
 
 export class MealTypeDTO {
   @IsOptional()

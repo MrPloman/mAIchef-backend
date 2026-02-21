@@ -1,8 +1,9 @@
 // application/mappers/recipe-preferences.mapper.ts
+import { CuisineType } from 'src/shared/domain/value-objects/cuisine-type.vo';
+import { MealType } from 'src/shared/domain/value-objects/meal-type.vo';
+import { RestrictionType } from 'src/shared/domain/value-objects/restriction-type.vo';
 import { RecipePrompt } from '../../domain/models/recipe-prompt.model';
-import { CuisineType } from '../../domain/value-objects/cuisine-type.vo';
-import { MealType } from '../../domain/value-objects/meal-type.vo';
-import { RestrictionType } from '../../domain/value-objects/restriction-type.vo';
+
 import { RecipePromptDTO } from '../dto/recipe-prompt.dto';
 
 export class RecipePromptMapper {

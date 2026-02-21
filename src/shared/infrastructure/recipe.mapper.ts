@@ -4,17 +4,17 @@ import { Ingredient } from 'src/shared/domain/value-objects/ingredient.vo';
 import { StepInstruction } from 'src/shared/domain/value-objects/step-instruction.vo';
 import { StepOrder } from 'src/shared/domain/value-objects/step-order.vo';
 import { Unit } from 'src/shared/domain/value-objects/unit.vo';
-import { Recipe } from '../../../../shared/domain/entities/recipe.entity';
-import { IngredientName } from '../../../../shared/domain/value-objects/ingredient-name.vo';
-import { Quantity } from '../../../../shared/domain/value-objects/quantity.vo';
-import { RecipeSchema } from './typeorm/recipe.schema';
+import { RecipeSchema } from '../../modules/recipes/infrastructure/persistence/typeorm/recipe.schema';
+import { Recipe } from '../domain/entities/recipe.entity';
+import { IngredientName } from '../domain/value-objects/ingredient-name.vo';
+import { Quantity } from '../domain/value-objects/quantity.vo';
 
 export class RecipeMapper {
   static toDomain(schema: RecipeSchema): Recipe {
     const ingredients: Ingredient[] = schema.ingredients.map(
       (i) =>
         new Ingredient(
-          new IngredientName(i.name),
+          new IngredientName(i.name ? i.name.getValue() : 'Unknown Ingredient'),
           new Quantity(i.quantity ? Number(i.quantity) : 0),
           new Unit(
             typeof i.unit === 'string' ? i.unit : (i.unit as any).getValue(),
@@ -49,12 +49,14 @@ export class RecipeMapper {
 
   static toSchema(recipe: Recipe): Partial<RecipeSchema> {
     const ingredients: Ingredient[] = recipe.ingredients.map(
-      (i) =>
+      (ing) =>
         new Ingredient(
-          new IngredientName(i.name ? i.name.getValue() : ''),
-          new Quantity(i.quantity ? i.quantity.getValue() : 0),
-          new Unit(i.unit ? i.unit.getValue() : 'G'),
-          i.notes ? i.notes : undefined,
+          new IngredientName(
+            ing.name ? ing.name.getValue() : 'Unknown Ingredient',
+          ),
+          new Quantity(ing.quantity ? Number(ing.quantity) : 0),
+          new Unit((ing.unit as Unit).getValue()),
+          ing.notes ?? undefined,
         ),
     );
     const steps: RecipeStep[] = recipe.steps.map(
@@ -71,7 +73,7 @@ export class RecipeMapper {
       version: recipe.version,
       title: recipe.title,
       description: recipe.description,
-      difficulty: recipe.difficulty ? recipe.difficulty.getValue() : undefined,
+      difficulty: recipe.difficulty,
       estimatedTimeInMinutes: recipe.estimatedTimeInMinutes,
       servings: recipe.servings,
       ingredients: ingredients,
