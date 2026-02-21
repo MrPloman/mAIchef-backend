@@ -7,9 +7,9 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { CuisineTypeEnum } from '../../domain/enums/cuisine-type.enum';
-import { MealTypeEnum } from '../../domain/enums/meal-type.enum';
-import { RestrictionTypeEnum } from '../../domain/enums/restriction-type.enum';
+import { CuisineTypeEnum } from '../../../auth/domain/enums/cuisine-type.enum';
+import { MealTypeEnum } from '../../../auth/domain/enums/meal-type.enum';
+import { RestrictionTypeEnum } from '../../../auth/domain/enums/restriction-type.enum';
 import { Duration } from '../../domain/value-objects/duration.vo';
 import { CuisineTypeDTO } from './cuisine-type.dto';
 import { MealTypeDTO } from './meal-type.dto';

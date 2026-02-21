@@ -7,7 +7,7 @@ export class Ingredient {
     public readonly name: IngredientName,
     public readonly quantity?: Quantity,
     public readonly unit?: Unit,
-    public readonly note?: string,
+    public readonly notes?: string,
   ) {
     if ((quantity && !unit) || (!quantity && unit)) {
       throw new Error('Quantity and unit must be provided together');

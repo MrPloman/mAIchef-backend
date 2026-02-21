@@ -1,6 +1,6 @@
 import { Difficulty } from '../value-objects/difficulty.vo';
 import { Ingredient } from '../value-objects/ingredient.vo';
-import { RecipeStep } from '../value-objects/recipe-step.vo';
+import { RecipeStep } from './recipe-step.model';
 
 export class Recipe {
   constructor(

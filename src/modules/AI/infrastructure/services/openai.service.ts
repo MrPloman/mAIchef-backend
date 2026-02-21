@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Recipe } from 'src/modules/recipes/domain/entities/recipe.entity';
-import { Difficulty } from 'src/modules/recipes/domain/value-objects/difficulty.vo';
-import { Duration } from 'src/modules/recipes/domain/value-objects/duration.vo';
-import { IngredientName } from 'src/modules/recipes/domain/value-objects/ingredient-name.vo';
-import { Ingredient } from 'src/modules/recipes/domain/value-objects/ingredient.vo';
-import { Quantity } from 'src/modules/recipes/domain/value-objects/quantity.vo';
-import { RecipeStep } from 'src/modules/recipes/domain/value-objects/recipe-step.vo';
-import { StepInstruction } from 'src/modules/recipes/domain/value-objects/step-instruction.vo';
-import { StepOrder } from 'src/modules/recipes/domain/value-objects/step-order.vo';
+import { RecipeSchema } from 'src/modules/recipes/infrastructure/persistence/typeorm/recipe.schema';
+import { maxRecipes } from 'src/shared/constants';
+import { RecipeStep } from 'src/shared/domain/entities/recipe-step.model';
+import { Recipe } from 'src/shared/domain/entities/recipe.entity';
+import { Duration } from 'src/shared/domain/value-objects/duration.vo';
+import { IngredientName } from 'src/shared/domain/value-objects/ingredient-name.vo';
+import { Ingredient } from 'src/shared/domain/value-objects/ingredient.vo';
+import { Quantity } from 'src/shared/domain/value-objects/quantity.vo';
+import { StepInstruction } from 'src/shared/domain/value-objects/step-instruction.vo';
+import { StepOrder } from 'src/shared/domain/value-objects/step-order.vo';
+import { Unit } from 'src/shared/domain/value-objects/unit.vo';
 import { RecipePrompt } from '../../domain/models/recipe-prompt.model';
-import { Unit } from '../../domain/value-objects/unit.vo';
-import type { RecipeSchema } from '../schemas/openAI.schema';
 
 @Injectable()
 export class GetOpenAIConfig {
@@ -49,7 +49,7 @@ export class GetOpenAIConfig {
 
     {
       const systemMessage = `
-                You are a culinary expert that generates recipe data. You must return exactly 1 different recipes that match the user's requirements.
+                You are a culinary expert that generates recipe data. You must return exactly ${maxRecipes} different recipes that match the user's requirements.
                 Each recipe must include:
                 - A unique _id in format "recipe-[uuid]"
                 - version: 1
@@ -93,8 +93,8 @@ export class GetOpenAIConfig {
         new Ingredient(
           new IngredientName(ing.name),
           new Quantity(ing.quantity ? Number(ing.quantity) : 0),
-          new Unit(ing.unit ?? '').getValue(),
-          ing.note ?? undefined,
+          new Unit((ing.unit as Unit).getValue()),
+          ing.notes ?? undefined,
         ),
     );
 
@@ -112,7 +112,7 @@ export class GetOpenAIConfig {
       recipeData.version,
       recipeData.title,
       recipeData.description,
-      recipeData.difficulty.toLowerCase() as Difficulty,
+      recipeData.difficulty as unknown as Recipe['difficulty'],
       recipeData.estimatedTimeInMinutes,
       recipeData.servings,
       ingredients,

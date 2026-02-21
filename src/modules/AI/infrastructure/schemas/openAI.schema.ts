@@ -1,49 +1,18 @@
+import { maxRecipes, minRecipes } from 'src/shared/constants';
 import { z } from 'zod';
 
-// ⭐ Transform para convertir a mayúsculas
-export const difficultySchema = z
-  .enum(['EASY', 'MEDIUM', 'HARD'])
-  .or(
-    z
-      .enum(['easy', 'medium', 'hard'])
-      .transform((val) => val.toUpperCase() as 'EASY' | 'MEDIUM' | 'HARD'),
-  );
+// ⭐ Acepta cualquier string y lo convierte a mayúsculas
+export const difficultySchema = z.preprocess(
+  (val) => (typeof val === 'string' ? val.toUpperCase() : val),
+  z.enum(['EASY', 'MEDIUM', 'HARD']),
+);
 
+// ⭐ SOLUCIÓN: Acepta CUALQUIER string como unidad
 export const ingredientSchema = z.object({
   name: z.string(),
   quantity: z.number().nullable().optional(),
-  unit: z
-    .enum([
-      'G',
-      'KG',
-      'ML',
-      'L',
-      'CUP',
-      'TBSP',
-      'TSP',
-      'UNIT',
-      'SLICE',
-      'PIECE',
-    ])
-    .or(
-      z
-        .enum([
-          'g',
-          'kg',
-          'ml',
-          'l',
-          'cup',
-          'tbsp',
-          'tsp',
-          'unit',
-          'slice',
-          'piece',
-        ])
-        .transform((val) => val.toUpperCase() as any),
-    )
-    .nullable()
-    .optional(),
-  note: z.string().nullable().optional(),
+  unit: z.string().nullable().optional(), // ✅ Acepta cualquier string
+  notes: z.string().nullable().optional(),
 });
 
 export const recipeStepSchema = z.object({
@@ -70,12 +39,7 @@ export const recipeSchema = z.object({
 
 // ⭐ CAMBIO: min(1).max(4) en lugar de .length(4) exacto
 export const recipesResponseSchema = z.object({
-  recipes: z.array(recipeSchema).min(1).max(4),
+  recipes: z.array(recipeSchema).min(minRecipes).max(maxRecipes),
 });
 
-// Types inferidos
-export type RecipeSchema = z.infer<typeof recipeSchema>;
-export type IngredientSchema = z.infer<typeof ingredientSchema>;
-export type RecipeStepSchema = z.infer<typeof recipeStepSchema>;
-export type Difficulty = z.infer<typeof difficultySchema>;
 export type RecipesResponse = z.infer<typeof recipesResponseSchema>;

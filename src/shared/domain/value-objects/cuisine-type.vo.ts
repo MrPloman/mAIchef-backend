@@ -1,4 +1,4 @@
-import { CuisineTypeEnum } from 'src/modules/AI/domain/enums/cuisine-type.enum';
+import { CuisineTypeEnum } from '../../../auth/domain/enums/cuisine-type.enum';
 
 export class CuisineType {
   private constructor(private readonly value: CuisineTypeEnum) {}

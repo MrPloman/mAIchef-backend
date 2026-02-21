@@ -1,3 +1,6 @@
+import { IngredientName } from 'src/shared/domain/value-objects/ingredient-name.vo';
+import { Quantity } from 'src/shared/domain/value-objects/quantity.vo';
+import { Unit } from 'src/shared/domain/value-objects/unit.vo';
 import {
   Column,
   CreateDateColumn,
@@ -46,9 +49,9 @@ export class RecipeSchema {
   // Store ingredients as JSON: { name: string, quantity: number, unit: string, notes?: string }
   @Column({ type: 'jsonb' })
   ingredients!: Array<{
-    name: string;
-    quantity: number;
-    unit: string;
+    name: IngredientName['value'];
+    quantity: Quantity;
+    unit: Unit;
     notes?: string;
   }>;
 

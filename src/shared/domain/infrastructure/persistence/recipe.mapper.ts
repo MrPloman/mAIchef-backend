@@ -1,13 +1,13 @@
-import { RecipeStep } from 'src/shared/domain/entities/recipe-step.model';
-import { Duration } from 'src/shared/domain/value-objects/duration.vo';
-import { Ingredient } from 'src/shared/domain/value-objects/ingredient.vo';
-import { StepInstruction } from 'src/shared/domain/value-objects/step-instruction.vo';
-import { StepOrder } from 'src/shared/domain/value-objects/step-order.vo';
-import { Unit } from 'src/shared/domain/value-objects/unit.vo';
+import { RecipeSchema } from 'src/modules/recipes/infrastructure/persistence/typeorm/recipe.schema';
 import { Recipe } from '../../../../shared/domain/entities/recipe.entity';
 import { IngredientName } from '../../../../shared/domain/value-objects/ingredient-name.vo';
 import { Quantity } from '../../../../shared/domain/value-objects/quantity.vo';
-import { RecipeSchema } from './typeorm/recipe.schema';
+import { RecipeStep } from '../../entities/recipe-step.model';
+import { Duration } from '../../value-objects/duration.vo';
+import { Ingredient } from '../../value-objects/ingredient.vo';
+import { StepInstruction } from '../../value-objects/step-instruction.vo';
+import { StepOrder } from '../../value-objects/step-order.vo';
+import { Unit } from '../../value-objects/unit.vo';
 
 export class RecipeMapper {
   static toDomain(schema: RecipeSchema): Recipe {
@@ -17,7 +17,7 @@ export class RecipeMapper {
           new IngredientName(i.name),
           new Quantity(i.quantity ? Number(i.quantity) : 0),
           new Unit(
-            typeof i.unit === 'string' ? i.unit : (i.unit as any).getValue(),
+            typeof i.unit === 'string' ? i.unit : (i.unit as Unit).getValue(),
           ),
           i.notes,
         ),
@@ -48,33 +48,20 @@ export class RecipeMapper {
   }
 
   static toSchema(recipe: Recipe): Partial<RecipeSchema> {
-    const ingredients: Ingredient[] = recipe.ingredients.map(
-      (i) =>
-        new Ingredient(
-          new IngredientName(i.name ? i.name.getValue() : ''),
-          new Quantity(i.quantity ? i.quantity.getValue() : 0),
-          new Unit(i.unit ? i.unit.getValue() : 'G'),
-          i.notes ? i.notes : undefined,
-        ),
-    );
-    const steps: RecipeStep[] = recipe.steps.map(
-      (s) =>
-        new RecipeStep(
-          new StepOrder(s.order.getValue()),
-          new StepInstruction(s.instruction.getValue()),
-          new Duration(s.duration?.getValue() ?? 0),
-          s.tips,
-        ),
-    );
     return {
       _id: recipe._id,
       version: recipe.version,
       title: recipe.title,
       description: recipe.description,
-      difficulty: recipe.difficulty ? recipe.difficulty.getValue() : undefined,
+      difficulty: recipe.difficulty,
       estimatedTimeInMinutes: recipe.estimatedTimeInMinutes,
       servings: recipe.servings,
-      ingredients: ingredients,
+      ingredients: recipe.ingredients.map((i) => ({
+        name: i.name.getValue(),
+        quantity: i.quantity.getValue(),
+        unit: typeof i.unit === 'string' ? i.unit : (i.unit as any).getValue(),
+        notes: i.notes ?? undefined,
+      })),
       steps: recipe.steps.map((s) => ({
         order: s.order.getValue(),
         instruction: s.instruction.getValue(),

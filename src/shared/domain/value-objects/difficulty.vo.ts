@@ -15,7 +15,7 @@ export class Difficulty {
     return new Difficulty(value);
   }
 
-  getValue(): string {
+  getValue(): Difficulty['value'] {
     return this.value;
   }
 

@@ -1,4 +1,4 @@
-import { MealTypeEnum } from 'src/modules/AI/domain/enums/meal-type.enum';
+import { MealTypeEnum } from '../../../auth/domain/enums/meal-type.enum';
 
 export class MealType {
   private constructor(private readonly value: MealTypeEnum) {}

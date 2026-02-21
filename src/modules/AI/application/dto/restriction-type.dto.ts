@@ -1,5 +1,5 @@
 import { IsArray, IsEnum, IsOptional } from 'class-validator';
-import { RestrictionTypeEnum } from '../../domain/enums/restriction-type.enum';
+import { RestrictionTypeEnum } from '../../../auth/domain/enums/restriction-type.enum';
 
 export class RestrictionTypeDTO {
   @IsOptional()

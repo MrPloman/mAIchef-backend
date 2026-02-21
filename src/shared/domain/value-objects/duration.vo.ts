@@ -1,5 +1,5 @@
 export class Duration {
-  private constructor(private readonly value: number) {}
+  constructor(private readonly value: number) {}
 
   static create(value: number): Duration {
     if (!Number.isInteger(value) || value <= 0) {
