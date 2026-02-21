@@ -40,6 +40,7 @@ export class OpenAIAdapter implements AIRepository {
       response_format: { type: 'json_object' },
     });
     const content = response.choices[0].message.content;
+    console.log(content);
 
     if (!content) {
       throw new Error('OpenAI returned empty content');

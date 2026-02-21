@@ -13,24 +13,28 @@ import { Quantity } from '../domain/value-objects/quantity.vo';
 export class RecipeMapper {
   static fromOpenAI(openAIData: Recipe): Recipe {
     const ingredients: Ingredient[] = openAIData.ingredients.map(
-      (ingredient: any) =>
-        new Ingredient(
-          new IngredientName(ingredient.name), // ✅ Correcto
-          new Quantity(ingredient.quantity), // ✅ Correcto
-          new Unit(ingredient.unit?.toUpperCase() ?? 'G'), // ✅ Correcto
-          ingredient.notes ?? undefined, // ✅ Correcto
-        ),
+      (ingredient: Ingredient) => {
+        const _ingredient = {
+          name: ingredient.name,
+          quantity: ingredient.quantity ? Number(ingredient.quantity) : 0,
+          unit: ingredient.unit ? String(ingredient.unit).toUpperCase() : 'G',
+          notes: ingredient.notes ?? undefined,
+        };
+        return _ingredient as any as Ingredient;
+      },
     );
 
-    const steps: RecipeStep[] = openAIData.steps.map(
-      (s: any) =>
-        new RecipeStep(
-          new StepOrder(s.order),
-          new StepInstruction(s.instruction),
-          new Duration(s.duration ?? 0),
-          s.tips ?? undefined,
-        ),
-    );
+    const steps: RecipeStep[] = openAIData.steps.map((s: RecipeStep) => {
+      const _step = {
+        order: s.order ? Number(s.order) : 1,
+        instruction: s.instruction
+          ? String(s.instruction)
+          : 'No instruction provided',
+        duration: s.duration ? Number(s.duration) : 0,
+        tips: s.tips ?? undefined,
+      };
+      return _step as any as RecipeStep;
+    });
 
     return new Recipe(
       openAIData._id,
