@@ -30,50 +30,89 @@ export class GetOpenAIConfig {
   } {
     const servings = generateRecipePrompt.preferences?.servings || 1;
     const cuisineTypes =
-      generateRecipePrompt.preferences?.cuisineType?.join(', ') || '';
+      generateRecipePrompt.preferences?.cuisineTypes?.join(', ');
     const mealTypes =
-      generateRecipePrompt.preferences?.mealType?.join(', ') || '';
+      generateRecipePrompt.preferences?.mealTypes?.join(', ') || '';
     const restrictionTypes =
-      generateRecipePrompt.preferences?.restrictionType?.join(', ') || '';
+      generateRecipePrompt.preferences?.restrictions?.join(', ') || '';
     const maxDuration = generateRecipePrompt.preferences?.maxDuration || '';
 
     {
       const systemMessage = `
-                You are a culinary expert that generates recipe data. You must return exactly ${maxRecipes} different recipes that match the user's requirements.
-                Each recipe must include:
-                - A unique _id in format "recipe-[uuid]"
-                - version: 1
-                - title: clear, appetizing name
-                - description: brief, appetizing description
-                - difficulty: "EASY", "MEDIUM", or "HARD"
-                - estimatedTimeInMinutes: realistic time estimate
-                - servings: number of servings
-                - ingredients: array with name, optional quantity, optional unit but it has to be one of these strings ('G', 'KG', 'ML', 'L', 'CUP', 'TBSP', 'TSP', 'UNIT', 'SLICE' or 'PIECE'), optional notes
-                - steps: array with order (starting at 1), instruction, duration **REQUIRED** AS A NUMBER IN MINUTES, optional tips as an **array of strings**.
-                - createdAt: current ISO 8601 datetime string
-                - userId: optional user identifier
-                - parentRecipeId: optional parent recipe reference
+                You are a professional culinary AI that generates structured recipe data.
 
-                IMPORTANT RULES:
-                - All recipes must respect the dietary restrictions, cuisine type, meal type, difficulty, and time constraints
-                - Ingredients must be realistic and proportional to servings
-                - Steps must be clear, actionable, and in logical order
-                - Each recipe must be unique and different from the others`;
+                You MUST return EXACTLY ${maxRecipes} recipes.
+                You MUST return ONLY valid JSON.
+                Do NOT include explanations, markdown, comments, or extra text.
+                Improve the recipe explanation using the steps array, be concise and friendly.
+
+                Return a JSON array of recipe objects.
+
+                Each recipe must follow this exact schema:
+
+                {
+                  "_id": "recipe-<uuid>",
+                  "version": 1,
+                  "title": "string",
+                  "description": "string",
+                  "difficulty": "EASY" | "MEDIUM" | "HARD",
+                  "estimatedTimeInMinutes": number > 0,
+                  "servings": number > 0,
+                  "ingredients": [
+                    {
+                      "name": "string",
+                      "quantity": number (optional),
+                      "unit": "G" | "KG" | "ML" | "L" | "CUP" | "TBSP" | "TSP" | "UNIT" | "SLICE" | "PIECE" | "CLOVE" (optional),
+                      "notes": "string" (optional)
+                    }
+                  ],
+                  "steps": [
+                    {
+                      "order": number (starting at 1),
+                      "instruction": "string" (you can improve and extend this field as much as you want, but it must be concise, friendly and actionable),
+                      "duration": number > 0,
+                      "tips": ["string"] (optional)
+                    }
+                  ],
+                  "createdAt": "ISO 8601 datetime string",
+                  "userId": "string" (optional),
+                  "parentRecipeId": "string" (optional)
+                }
+
+                STRICT NUMERICAL RULES:
+                - estimatedTimeInMinutes MUST be a positive integer greater than 0.
+                - Each step.duration MUST be a positive integer greater than 0.
+                - Step durations must sum approximately to estimatedTimeInMinutes (±5 minutes tolerance).
+                - Servings must be a positive integer greater than 0.
+                - No zero or negative numbers allowed anywhere.
+
+                OTHER STRICT RULES:
+                - All recipes must respect ALL user constraints.
+                - estimatedTimeInMinutes must NOT exceed the maximum allowed time.
+                - Ingredient quantities must be realistic and proportional to servings.
+                - Steps must be logically ordered and actionable.
+                - Recipes must be clearly different from each other.
+                - Before returning the result, internally verify:
+                - The cuisine type constraint is strictly respected.
+                - At least 3 authentic ingredients from the specified cuisine are included. If not, regenerate internally.
+                `;
 
       const userMessage = `
-                Generate ${maxRecipes} recipes based on these requirements:
+                Generate ${maxRecipes} different recipes with the following requirements:
 
-                User prompt: "${generateRecipePrompt.prompt}"
+                User request:
+                "${generateRecipePrompt.prompt}"
 
-                Preferences:
-                - Cuisine type: ${cuisineTypes}
+                Constraints:
+                - Cuisine type: ${cuisineTypes} **(IF SPECIFIED give absolute priority to these cuisines, add typical ingredients from that cuisine)**
                 - Meal type: ${mealTypes}
                 - Dietary restrictions: ${restrictionTypes}
                 - Servings: ${servings}
-                - Maximum time: ${maxDuration} minutes
+                - Maximum total time: ${maxDuration} minutes
 
-                Provide 4 varied recipes that all meet these criteria.
-      `;
+                All recipes must fully respect ALL constraints.
+                Return only the JSON array.
+                `;
       return { systemMessage, userMessage };
     }
   }

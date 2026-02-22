@@ -10,6 +10,7 @@ export class Unit {
     'UNIT',
     'SLICE',
     'PIECE',
+    'CLOVE',
   ];
 
   constructor(private readonly value: string) {

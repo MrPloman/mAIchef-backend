@@ -1,15 +1,15 @@
-import { CuisineType } from 'src/shared/domain/value-objects/cuisine-type.vo';
+import { CuisineTypeEnum } from 'src/shared/domain/enums/cuisine-type.enum';
+import { MealTypeEnum } from 'src/shared/domain/enums/meal-type.enum';
+import { RestrictionTypeEnum } from 'src/shared/domain/enums/restriction-type.enum';
 import { Duration } from 'src/shared/domain/value-objects/duration.vo';
-import { MealType } from 'src/shared/domain/value-objects/meal-type.vo';
-import { RestrictionType } from 'src/shared/domain/value-objects/restriction-type.vo';
 
 export class RecipePrompt {
   prompt!: string;
   preferences?: {
     servings?: number;
-    cuisineType?: CuisineType[];
-    mealType?: MealType[];
-    restrictionType?: RestrictionType[];
+    cuisineTypes?: CuisineTypeEnum[];
+    mealTypes?: MealTypeEnum[];
+    restrictions?: RestrictionTypeEnum[];
     maxDuration?: Duration;
   };
 }

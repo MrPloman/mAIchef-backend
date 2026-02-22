@@ -39,11 +39,10 @@ export class OpenAIAdapter implements AIRepository {
           content: `${userMessage}\n\nIMPORTANT: You must respond with valid JSON only. No explanations, no apologies, no extra text. Just the JSON.`,
         },
       ],
-      temperature: 0.7,
+      // max_completion_tokens: 1500,
       response_format: { type: 'json_object' },
     });
     const content = response.choices[0].message.content;
-    console.log(content);
 
     if (!content) {
       throw new Error('OpenAI returned empty content');

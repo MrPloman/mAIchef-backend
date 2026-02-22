@@ -1,7 +1,4 @@
 // application/mappers/recipe-preferences.mapper.ts
-import { CuisineType } from 'src/shared/domain/value-objects/cuisine-type.vo';
-import { MealType } from 'src/shared/domain/value-objects/meal-type.vo';
-import { RestrictionType } from 'src/shared/domain/value-objects/restriction-type.vo';
 import { RecipePrompt } from '../../domain/models/recipe-prompt.model';
 
 import { RecipePromptDTO } from '../dto/recipe-prompt.dto';
@@ -11,18 +8,10 @@ export class RecipePromptMapper {
     return {
       prompt: dto.prompt,
       preferences: {
-        servings: dto.preferences?.servings
-          ? Number(dto.preferences.servings)
-          : 1,
-        cuisineType: dto.preferences?.cuisineTypes
-          ?.map((c) => c.value)
-          .flat() as unknown as CuisineType[],
-        mealType: dto.preferences?.mealTypes
-          ?.map((m) => m.value)
-          .flat() as unknown as MealType[],
-        restrictionType: dto.preferences?.restrictions
-          ?.map((r) => r.value)
-          .flat() as unknown as RestrictionType[],
+        servings: dto.preferences?.servings ?? 1,
+        cuisineTypes: dto.preferences?.cuisineTypes ?? [], // ✅ Ya son enums directos
+        mealTypes: dto.preferences?.mealTypes ?? [], // ✅ Ya son enums directos
+        restrictions: dto.preferences?.restrictions ?? [], // ✅ Ya son enums directos
         maxDuration: dto.preferences?.maxDuration,
       },
     };
