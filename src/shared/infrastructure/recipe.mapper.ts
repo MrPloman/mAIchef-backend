@@ -78,7 +78,7 @@ export class RecipeMapper {
       schema.version,
       schema.title,
       schema.description,
-      difficulty,
+      difficulty.getValue() as unknown as Recipe['difficulty'],
       schema.estimatedTimeInMinutes,
       schema.servings,
       ingredients,

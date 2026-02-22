@@ -17,7 +17,6 @@ export class RecipeAdapter implements RecipesRepository {
     const schema = await this.recipeRepository.create(
       RecipeMapper.toSchema(recipe),
     );
-    console.log(schema);
     const saved = await this.recipeRepository.save(schema);
     const savedRecipe = RecipeMapper.toDomain(saved);
     console.log('Saved recipe:', savedRecipe);

@@ -8,11 +8,7 @@ export class Ingredient {
     public readonly quantity?: Quantity,
     public readonly unit?: UnitTypeEnum,
     public readonly notes?: string,
-  ) {
-    if ((quantity && !unit) || (!quantity && unit)) {
-      throw new Error('Quantity and unit must be provided together');
-    }
-  }
+  ) {}
 
   hasQuantity(): boolean {
     return !!this.quantity;
