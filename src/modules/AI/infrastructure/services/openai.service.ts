@@ -51,7 +51,7 @@ export class GetOpenAIConfig {
                 Each recipe must follow this exact schema:
 
                 {
-                  "_id": "recipe-<uuid>",
+                  "_id": "" RETURN EMPTY STRING, DO NOT MAKE UP RECIPE IDS,
                   "version": 1,
                   "title": "string",
                   "description": "string",
@@ -75,8 +75,8 @@ export class GetOpenAIConfig {
                     }
                   ],
                   "createdAt": "ISO 8601 datetime string",
-                  "userId": "string" (optional),
-                  "parentRecipeId": "string" (optional)
+                  "userId": "" (RETURN EMPTY STRING, DO NOT MAKE UP USER IDS),
+                  "parentRecipeId": "" (RETURN EMPTY STRING, DO NOT MAKE UP RECIPE IDS)
                 }
 
                 STRICT NUMERICAL RULES:
