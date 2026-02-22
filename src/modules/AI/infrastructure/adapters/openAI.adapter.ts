@@ -2,6 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai'; // Make sure to: npm install openai
 import { maxRecipes } from 'src/shared/constants';
+import { Recipe } from 'src/shared/domain/entities/recipe.entity';
 import { RecipeMapper } from 'src/shared/infrastructure/recipe.mapper';
 import z from 'zod';
 import { RecipePrompt } from '../../domain/models/recipe-prompt.model';
@@ -20,7 +21,9 @@ export class OpenAIAdapter implements AIRepository {
     });
   }
 
-  async getGeneratedRecipe(generateRecipePrompt: RecipePrompt): Promise<any> {
+  async getGeneratedRecipe(
+    generateRecipePrompt: RecipePrompt,
+  ): Promise<Recipe[]> {
     const { systemMessage, userMessage } =
       this.getOpenAIConfig.getPromptTemplate(generateRecipePrompt);
     const model = this.getOpenAIConfig.getModel();

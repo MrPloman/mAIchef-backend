@@ -49,7 +49,7 @@ export class GetOpenAIConfig {
                 - estimatedTimeInMinutes: realistic time estimate
                 - servings: number of servings
                 - ingredients: array with name, optional quantity, optional unit but it has to be one of these strings ('G', 'KG', 'ML', 'L', 'CUP', 'TBSP', 'TSP', 'UNIT', 'SLICE' or 'PIECE'), optional notes
-                - steps: array with order (starting at 1), instruction, duration **REQUIRED** AS A NUMBER IN MINUTES, optional tips
+                - steps: array with order (starting at 1), instruction, duration **REQUIRED** AS A NUMBER IN MINUTES, optional tips as an **array of strings**.
                 - createdAt: current ISO 8601 datetime string
                 - userId: optional user identifier
                 - parentRecipeId: optional parent recipe reference

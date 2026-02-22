@@ -31,7 +31,7 @@ export class RecipeMapper {
           ? String(s.instruction)
           : 'No instruction provided',
         duration: s.duration ? Number(s.duration) : 0,
-        tips: s.tips ?? undefined,
+        tips: s.tips ?? [],
       };
       return _step as any as RecipeStep;
     });
