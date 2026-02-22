@@ -1,15 +1,27 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import type { Response } from 'express';
+import { SaveRecipeUseCase } from 'src/modules/recipes/application/use-cases/save-recipe.use-case';
+import { Recipe } from 'src/shared/domain/entities/recipe.entity';
 import { RecipePromptDTO } from '../../application/dto/recipe-prompt.dto';
-import { GenerateRecipeUseCase } from '../../application/use-cases/generate-recipe.use-case';
+import { PromptRecipeUseCase } from '../../application/use-cases/prompt-recipe.use-case';
 
 @Controller('ai')
 export class AIController {
-  constructor(private readonly generateRecipeUseCase: GenerateRecipeUseCase) {}
+  constructor(
+    private readonly generateRecipeUseCase: PromptRecipeUseCase,
+    private readonly saveRecipeUseCase: SaveRecipeUseCase,
+  ) {}
   @Post('generateRecipe')
   async generateRecipe(@Body() body: RecipePromptDTO, @Res() res: Response) {
-    const result = await this.generateRecipeUseCase.execute(body);
-    return res.json(result);
+    const aiRecipes: Recipe[] = await this.generateRecipeUseCase.execute(body);
+
+    // THIS IS GONNA BE COMMENTED OUT LATER, JUST FOR TESTING PURPOSES
+    const storedRecipes: Recipe[] = await Promise.all(
+      aiRecipes.map((recipe: Recipe) => {
+        return this.saveRecipeUseCase.execute(recipe);
+      }),
+    );
+    return res.json(storedRecipes);
   }
   @Post('replanRecipe')
   public async replanRecipe() {

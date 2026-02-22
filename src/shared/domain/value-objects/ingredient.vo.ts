@@ -1,12 +1,12 @@
+import { UnitTypeEnum } from '../enums/unit-type.enum';
 import { IngredientName } from '../value-objects/ingredient-name.vo';
 import { Quantity } from '../value-objects/quantity.vo';
-import { Unit } from '../value-objects/unit.vo';
 
 export class Ingredient {
   constructor(
     public readonly name: IngredientName,
     public readonly quantity?: Quantity,
-    public readonly unit?: Unit,
+    public readonly unit?: UnitTypeEnum,
     public readonly notes?: string,
   ) {
     if ((quantity && !unit) || (!quantity && unit)) {

@@ -9,9 +9,9 @@ export class RecipePromptMapper {
       prompt: dto.prompt,
       preferences: {
         servings: dto.preferences?.servings ?? 1,
-        cuisineTypes: dto.preferences?.cuisineTypes ?? [], // ✅ Ya son enums directos
-        mealTypes: dto.preferences?.mealTypes ?? [], // ✅ Ya son enums directos
-        restrictions: dto.preferences?.restrictions ?? [], // ✅ Ya son enums directos
+        cuisineTypes: dto.preferences?.cuisineTypes ?? [],
+        mealTypes: dto.preferences?.mealTypes ?? [],
+        restrictions: dto.preferences?.restrictions ?? [],
         maxDuration: dto.preferences?.maxDuration,
       },
     };

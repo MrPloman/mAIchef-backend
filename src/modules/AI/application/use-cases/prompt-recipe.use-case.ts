@@ -6,7 +6,7 @@ import { RecipePromptDTO } from '../dto/recipe-prompt.dto';
 import { RecipePromptMapper } from '../mappers/recipe-prompt.mapper';
 
 @Injectable()
-export class GenerateRecipeUseCase {
+export class PromptRecipeUseCase {
   constructor(
     @Inject('AIRepository')
     private readonly aiRepository: AIRepository,

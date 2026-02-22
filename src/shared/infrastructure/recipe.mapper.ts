@@ -1,11 +1,9 @@
 import { RecipeStep } from 'src/shared/domain/entities/recipe-step.model';
-import { Duration } from 'src/shared/domain/value-objects/duration.vo';
 import { Ingredient } from 'src/shared/domain/value-objects/ingredient.vo';
-import { StepInstruction } from 'src/shared/domain/value-objects/step-instruction.vo';
-import { StepOrder } from 'src/shared/domain/value-objects/step-order.vo';
-import { Unit } from 'src/shared/domain/value-objects/unit.vo';
 import { RecipeSchema } from '../../modules/recipes/infrastructure/persistence/typeorm/recipe.schema';
 import { Recipe } from '../domain/entities/recipe.entity';
+import { DifficultyTypeEnum } from '../domain/enums/difficulty-type.enum';
+import { UnitTypeEnum } from '../domain/enums/unit-type.enum';
 import { Difficulty } from '../domain/value-objects/difficulty.vo';
 import { IngredientName } from '../domain/value-objects/ingredient-name.vo';
 import { Quantity } from '../domain/value-objects/quantity.vo';
@@ -58,19 +56,23 @@ export class RecipeMapper {
         new Ingredient(
           new IngredientName(ingredient.name), // ✅ ingredient.name es string
           new Quantity(ingredient.quantity ?? 0), // ✅ ingredient.quantity es number | null
-          new Unit(ingredient.unit?.toUpperCase() ?? ''), // ✅ ingredient.unit es string | null
+          ingredient.unit
+            ? UnitTypeEnum[ingredient.unit.toUpperCase()]
+            : undefined, // ✅ ingredient.unit es string | null
           ingredient.notes ?? undefined, // ✅ ingredient.note es string | null (nota: es "note" no "notes")
         ),
     );
-    const steps: RecipeStep[] = schema.steps.map(
-      (s) =>
-        new RecipeStep(
-          new StepOrder(s.order),
-          new StepInstruction(s.instruction),
-          new Duration(s.duration ? Number(s.duration) : 0),
-          s.tips,
-        ),
-    );
+    const steps: RecipeStep[] = schema.steps.map((s: RecipeStep) => {
+      const _step = {
+        order: s.order ? Number(s.order) : 1,
+        instruction: s.instruction
+          ? String(s.instruction)
+          : 'No instruction provided',
+        duration: s.duration ? Number(s.duration) : 0,
+        tips: s.tips ?? [],
+      };
+      return _step as any as RecipeStep;
+    });
     return new Recipe(
       schema._id,
       schema.version,
@@ -88,46 +90,61 @@ export class RecipeMapper {
   }
 
   static toSchema(recipe: Recipe): Partial<RecipeSchema> {
-    const ingredients: Ingredient[] = recipe.ingredients.map(
-      (ing) =>
-        new Ingredient(
-          new IngredientName(
-            ing.name ? ing.name.getValue() : 'Unknown Ingredient',
-          ),
-          new Quantity(ing.quantity ? Number(ing.quantity) : 0),
-          new Unit((ing.unit as Unit).getValue().toUpperCase()),
-          ing.notes ?? undefined,
-        ),
-    );
-    const steps: RecipeStep[] = recipe.steps.map(
-      (s) =>
-        new RecipeStep(
-          new StepOrder(s.order.getValue()),
-          new StepInstruction(s.instruction.getValue()),
-          new Duration(s.duration?.getValue() ?? 0),
-          s.tips,
-        ),
-    );
-    return {
-      _id: recipe._id,
-      version: recipe.version,
+    // const ingredients: Ingredient[] = recipe.ingredients.map(
+    //   (ingredient: Ingredient) => {
+    //     const _ingredient = {
+    //       name: ingredient.name,
+    //       quantity: ingredient.quantity ?? 0,
+    //       unit: ingredient.unit ?? 'G',
+    //       notes: ingredient.notes ?? [],
+    //     };
+    //     return _ingredient as any as Ingredient;
+    //   },
+    // );
+    // const steps: RecipeStep[] = recipe.steps.map((s: RecipeStep) => {
+    //   const _step = {
+    //     order: s.order ?? 1,
+    //     instruction: s.instruction ?? 'No instruction provided',
+    //     duration: s.duration ?? 0,
+    //     tips: s.tips ?? [],
+    //   };
+    //   return _step as any as RecipeStep;
+    // });
+    const schema: Partial<RecipeSchema> = {
       title: recipe.title,
       description: recipe.description,
-      difficulty: recipe.difficulty
-        .getValue()
-        .toUpperCase() as unknown as RecipeSchema['difficulty'],
+      difficulty: recipe.difficulty as unknown as DifficultyTypeEnum,
       estimatedTimeInMinutes: recipe.estimatedTimeInMinutes,
       servings: recipe.servings,
-      ingredients: ingredients,
-      steps: recipe.steps.map((s) => ({
-        order: s.order.getValue(),
-        instruction: s.instruction.getValue(),
-        duration: s.duration?.getValue() ?? 0,
-      })),
+      ingredients: recipe.ingredients,
+      steps: recipe.steps,
       createdAt: recipe.createdAt,
-      userId: recipe.userId,
-      parentRecipeId: recipe.parentRecipeId,
     };
+
+    // Solo incluir _id si existe y no está vacío
+    if (recipe._id && recipe._id.trim() !== '') {
+      schema._id = recipe._id;
+    }
+    if (recipe.userId && recipe.userId.trim() !== '') {
+      schema.userId = recipe.userId;
+    }
+    if (recipe.parentRecipeId && recipe.parentRecipeId.trim() !== '') {
+      schema.parentRecipeId = recipe.parentRecipeId;
+    }
+
+    return schema;
+
+    // return {
+    //   version: recipe.version,
+    //   title: recipe.title,
+    //   description: recipe.description,
+    //   difficulty: recipe.difficulty as unknown as DifficultyTypeEnum,
+    //   estimatedTimeInMinutes: recipe.estimatedTimeInMinutes,
+    //   servings: recipe.servings,
+    //   ingredients: ingredients,
+    //   steps: steps,
+    //   createdAt: recipe.createdAt,
+    // };
   }
   static parseDifficulty(value: string): Difficulty {
     const upperValue = value.toUpperCase();

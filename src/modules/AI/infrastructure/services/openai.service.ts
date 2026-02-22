@@ -62,7 +62,7 @@ export class GetOpenAIConfig {
                     {
                       "name": "string",
                       "quantity": number (optional),
-                      "unit": "G" | "KG" | "ML" | "L" | "CUP" | "TBSP" | "TSP" | "UNIT" | "SLICE" | "PIECE" | "CLOVE" (optional),
+                      "unit": "G" | "KG" | "ML" | "L" | "CUP" | "TBSP" | "TSP" | "UNIT" | "SLICE" | "PIECE" | "CLOVE" | "BUNCH" | "CAN" | "BOTTLE" | "PACKET" | "STICK" | "DASH" | "PINCH" | "SCOOP" | "BAG" | "BOX" | "ROLL" | "STRIP" | "SHEET" | "LAYER" | "WEDGE" | "HEAD" | "EAR" | "STALK" | "SPRIG" (optional),
                       "notes": "string" (optional)
                     }
                   ],

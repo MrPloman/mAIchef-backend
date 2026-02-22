@@ -1,7 +1,8 @@
+import { RecipeStep } from 'src/shared/domain/entities/recipe-step.model';
 import { DifficultyTypeEnum } from 'src/shared/domain/enums/difficulty-type.enum';
+import { UnitTypeEnum } from 'src/shared/domain/enums/unit-type.enum';
 import { IngredientName } from 'src/shared/domain/value-objects/ingredient-name.vo';
 import { Quantity } from 'src/shared/domain/value-objects/quantity.vo';
-import { Unit } from 'src/shared/domain/value-objects/unit.vo';
 import {
   Column,
   CreateDateColumn,
@@ -46,18 +47,13 @@ export class RecipeSchema {
   ingredients!: Array<{
     name: IngredientName;
     quantity?: Quantity;
-    unit?: Unit;
+    unit?: UnitTypeEnum;
     notes?: string;
   }>;
 
   // Store steps as JSON: { order: number, instruction: string, duration?: number, tips?: string[] }
   @Column({ type: 'jsonb' })
-  steps!: Array<{
-    order: number;
-    instruction: string;
-    duration?: number;
-    tips?: string[];
-  }>;
+  steps!: Array<RecipeStep>;
 
   @Column({ name: 'user_id', type: 'uuid', nullable: true })
   userId?: string;
