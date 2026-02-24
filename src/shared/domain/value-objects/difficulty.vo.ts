@@ -1,11 +1,13 @@
+import { DifficultyType } from '../entities/recipe.interface';
+
 export class Difficulty {
-  private constructor(private readonly value: string) {}
+  private constructor(private readonly value: DifficultyType) {}
 
   static EASY = new Difficulty('EASY');
   static MEDIUM = new Difficulty('MEDIUM');
   static HARD = new Difficulty('HARD');
 
-  static from(value: string): Difficulty {
+  static from(value: DifficultyType): Difficulty {
     const allowed = ['EASY', 'MEDIUM', 'HARD'];
 
     if (!allowed.includes(value)) {
@@ -15,7 +17,7 @@ export class Difficulty {
     return new Difficulty(value);
   }
 
-  getValue(): Difficulty['value'] {
+  getValue(): DifficultyType {
     return this.value;
   }
 

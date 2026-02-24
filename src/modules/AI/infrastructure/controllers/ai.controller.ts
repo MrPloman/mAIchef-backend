@@ -2,7 +2,7 @@ import { Body, Controller, Post, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { SaveRecipeUseCase } from 'src/modules/recipes/application/use-cases/save-recipe.use-case';
 import { RecipeSchema } from 'src/modules/recipes/infrastructure/persistence/typeorm/recipe.schema';
-import { Recipe } from 'src/shared/domain/entities/recipe.entity';
+import { RecipeEntity } from 'src/shared/domain/entities/recipe.entity';
 import { RecipePromptDTO } from '../../application/dto/recipe-prompt.dto';
 import { PromptRecipeUseCase } from '../../application/use-cases/prompt-recipe.use-case';
 
@@ -14,11 +14,12 @@ export class AIController {
   ) {}
   @Post('generateRecipe')
   async generateRecipe(@Body() body: RecipePromptDTO, @Res() res: Response) {
-    const aiRecipes: Recipe[] = await this.generateRecipeUseCase.execute(body);
+    const aiRecipes: RecipeEntity[] =
+      await this.generateRecipeUseCase.execute(body);
 
     // THIS IS GONNA BE COMMENTED OUT LATER, JUST FOR TESTING PURPOSES
     const storedRecipes: RecipeSchema[] = await Promise.all(
-      aiRecipes.map((recipe: Recipe) => {
+      aiRecipes.map((recipe: RecipeEntity) => {
         return this.saveRecipeUseCase.execute(recipe);
       }),
     );

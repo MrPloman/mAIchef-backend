@@ -1,20 +1,25 @@
 import { RecipeStep } from 'src/shared/domain/entities/recipe-step.model';
+import {
+  IngredientInterface,
+  RecipeInterface,
+  RecipeStepInterface,
+} from 'src/shared/domain/entities/recipe.interface';
 import { Ingredient } from 'src/shared/domain/value-objects/ingredient.vo';
-import { RecipeSchema } from '../../modules/recipes/infrastructure/persistence/typeorm/recipe.schema';
-import { Recipe } from '../domain/entities/recipe.entity';
-import { DifficultyTypeEnum } from '../domain/enums/difficulty-type.enum';
-import { UnitTypeEnum } from '../domain/enums/unit-type.enum';
-import { Difficulty } from '../domain/value-objects/difficulty.vo';
-import { Duration } from '../domain/value-objects/duration.vo';
-import { IngredientName } from '../domain/value-objects/ingredient-name.vo';
-import { Quantity } from '../domain/value-objects/quantity.vo';
-import { StepInstruction } from '../domain/value-objects/step-instruction.vo';
-import { StepOrder } from '../domain/value-objects/step-order.vo';
+import { RecipeSchema } from '../../../modules/recipes/infrastructure/persistence/typeorm/recipe.schema';
+import { RecipeEntity } from '../../domain/entities/recipe.entity';
+import { DifficultyTypeEnum } from '../../domain/enums/difficulty-type.enum';
+import { UnitTypeEnum } from '../../domain/enums/unit-type.enum';
+import { Difficulty } from '../../domain/value-objects/difficulty.vo';
+import { Duration } from '../../domain/value-objects/duration.vo';
+import { IngredientName } from '../../domain/value-objects/ingredient-name.vo';
+import { Quantity } from '../../domain/value-objects/quantity.vo';
+import { StepInstruction } from '../../domain/value-objects/step-instruction.vo';
+import { StepOrder } from '../../domain/value-objects/step-order.vo';
 
 export class RecipeMapper {
-  static fromOpenAI(openAIData: Recipe): Recipe {
+  static fromOpenAIToDomain(openAIData: RecipeInterface): RecipeEntity {
     const ingredients: Ingredient[] = openAIData.ingredients.map(
-      (ingredient: Ingredient) => {
+      (ingredient: IngredientInterface) => {
         const _ingredient = {
           name: ingredient.name,
           quantity: ingredient.quantity ? Number(ingredient.quantity) : 0,
@@ -25,24 +30,26 @@ export class RecipeMapper {
       },
     );
 
-    const steps: RecipeStep[] = openAIData.steps.map((s: RecipeStep) => {
-      const _step = {
-        order: s.order ? Number(s.order) : 1,
-        instruction: s.instruction
-          ? String(s.instruction)
-          : 'No instruction provided',
-        duration: s.duration ? Number(s.duration) : 0,
-        tips: s.tips ?? [],
-      };
-      return _step as any as RecipeStep;
-    });
+    const steps: RecipeStep[] = openAIData.steps.map(
+      (s: RecipeStepInterface) => {
+        const _step = {
+          order: s.order ? Number(s.order) : 1,
+          instruction: s.instruction
+            ? String(s.instruction)
+            : 'No instruction provided',
+          duration: s.duration ? Number(s.duration) : 0,
+          tips: s.tips ?? [],
+        };
+        return _step as any as RecipeStep;
+      },
+    );
 
-    return new Recipe(
+    return new RecipeEntity(
       openAIData._id,
       openAIData.version,
       openAIData.title,
       openAIData.description,
-      openAIData.difficulty as unknown as Recipe['difficulty'],
+      openAIData.difficulty as unknown as RecipeEntity['difficulty'],
       openAIData.estimatedTimeInMinutes,
       openAIData.servings,
       ingredients,
@@ -52,7 +59,7 @@ export class RecipeMapper {
       openAIData.parentRecipeId ?? undefined,
     );
   }
-  static toDomain(schema: RecipeSchema): Recipe {
+  static fromSchemaToDomain(schema: RecipeSchema): RecipeEntity {
     const difficulty = this.parseDifficulty(schema.difficulty);
     const ingredients: Ingredient[] = schema.ingredients.map(
       (ingredient: any) =>
@@ -73,12 +80,12 @@ export class RecipeMapper {
         s.tips ?? [],
       );
     });
-    return new Recipe(
+    return new RecipeEntity(
       schema._id,
       schema.version,
       schema.title,
       schema.description,
-      difficulty.getValue() as unknown as Recipe['difficulty'],
+      difficulty.getValue() as unknown as RecipeEntity['difficulty'],
       schema.estimatedTimeInMinutes,
       schema.servings,
       ingredients,
@@ -89,11 +96,13 @@ export class RecipeMapper {
     );
   }
 
-  static toSchema(recipe: Recipe): Partial<RecipeSchema> {
+  static toSchema(recipe: RecipeEntity): Partial<RecipeSchema> {
+    const difficultyValue: DifficultyTypeEnum =
+      recipe.difficulty.getValue() as DifficultyTypeEnum;
     const schema: Partial<RecipeSchema> = {
       title: recipe.title,
       description: recipe.description,
-      difficulty: recipe.difficulty as unknown as DifficultyTypeEnum,
+      difficulty: difficultyValue,
       estimatedTimeInMinutes: recipe.estimatedTimeInMinutes,
       servings: recipe.servings,
       ingredients: recipe.ingredients,
@@ -113,13 +122,13 @@ export class RecipeMapper {
     }
     return schema;
   }
-  static toResponse(recipe: Recipe) {
+  static toClientResponse(recipe: RecipeEntity): RecipeInterface {
     return {
       _id: recipe._id,
       version: recipe.version,
       title: recipe.title,
       description: recipe.description,
-      difficulty: recipe.difficulty,
+      difficulty: recipe.difficulty.getValue(),
       estimatedTimeInMinutes: recipe.estimatedTimeInMinutes,
       servings: recipe.servings,
       ingredients: recipe.ingredients.map((ingredient) => ({

@@ -2,7 +2,7 @@ import { Difficulty } from '../value-objects/difficulty.vo';
 import { Ingredient } from '../value-objects/ingredient.vo';
 import { RecipeStep } from './recipe-step.model';
 
-export class Recipe {
+export class RecipeEntity {
   constructor(
     public readonly _id: string,
     public readonly version: number,

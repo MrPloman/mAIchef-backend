@@ -3,20 +3,25 @@ export interface RecipeInterface {
   version: number;
   title: string;
   description: string;
-  difficulty: string;
+  difficulty: DifficultyType;
   estimatedTimeInMinutes: number;
   servings: number;
-  ingredients: {
-    name: string;
-    quantity?: number;
-    unit?: string;
-    notes?: string;
-  }[];
-  steps: {
-    stepNumber: number;
-    instruction: string;
-  }[];
+  ingredients: IngredientInterface[];
+  steps: RecipeStepInterface[];
   createdAt: Date;
   userId?: string;
   parentRecipeId?: string;
 }
+export interface IngredientInterface {
+  name: string;
+  quantity?: number;
+  unit?: string;
+  notes?: string;
+}
+export interface RecipeStepInterface {
+  order: number;
+  instruction: string;
+  duration?: number;
+  tips?: string[];
+}
+export type DifficultyType = 'EASY' | 'MEDIUM' | 'HARD';

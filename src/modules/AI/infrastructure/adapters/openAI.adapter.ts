@@ -2,8 +2,8 @@
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai'; // Make sure to: npm install openai
 import { maxRecipes } from 'src/shared/constants';
-import { Recipe } from 'src/shared/domain/entities/recipe.entity';
-import { RecipeMapper } from 'src/shared/infrastructure/recipe.mapper';
+import { RecipeEntity } from 'src/shared/domain/entities/recipe.entity';
+import { RecipeMapper } from 'src/shared/infrastructure/persistence/recipe.mapper';
 import z from 'zod';
 import { RecipePrompt } from '../../domain/models/recipe-prompt.model';
 import { AIRepository } from '../../domain/ports/ai.repository';
@@ -23,7 +23,7 @@ export class OpenAIAdapter implements AIRepository {
 
   async getGeneratedRecipe(
     generateRecipePrompt: RecipePrompt,
-  ): Promise<Recipe[]> {
+  ): Promise<RecipeEntity[]> {
     const { systemMessage, userMessage } =
       this.getOpenAIConfig.getPromptTemplate(generateRecipePrompt);
     const model = this.getOpenAIConfig.getModel();
@@ -55,9 +55,9 @@ export class OpenAIAdapter implements AIRepository {
     // Validar con Zod
     // const validatedRecipes = recipesArraySchema.parse(parsedData);
 
-    return validatedResponse.recipes.map((recipeData: any) =>
-      RecipeMapper.fromOpenAI(recipeData),
-    );
+    return validatedResponse.recipes.map((recipeData: any) => {
+      return RecipeMapper.fromOpenAIToDomain(recipeData);
+    });
   }
 
   async getReplannedRecipe(replannedRecipePrompt: RecipePrompt): Promise<any> {
