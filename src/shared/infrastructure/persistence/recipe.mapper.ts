@@ -17,7 +17,7 @@ import { StepInstruction } from '../../domain/value-objects/step-instruction.vo'
 import { StepOrder } from '../../domain/value-objects/step-order.vo';
 
 export class RecipeMapper {
-  static fromOpenAIToDomain(openAIData: RecipeInterface): RecipeEntity {
+  static fromAIToDomain(openAIData: RecipeInterface): RecipeEntity {
     const ingredients: Ingredient[] = openAIData.ingredients.map(
       (ingredient: IngredientInterface) => {
         const _ingredient = {
@@ -59,10 +59,10 @@ export class RecipeMapper {
       openAIData.parentRecipeId ?? undefined,
     );
   }
-  static fromSchemaToDomain(schema: RecipeSchema): RecipeEntity {
+  static toDomain(schema: RecipeInterface): RecipeEntity {
     const difficulty = this.parseDifficulty(schema.difficulty);
     const ingredients: Ingredient[] = schema.ingredients.map(
-      (ingredient: any) =>
+      (ingredient: IngredientInterface) =>
         new Ingredient(
           new IngredientName(ingredient.name), // ✅ ingredient.name es string
           new Quantity(ingredient.quantity ?? 0), // ✅ ingredient.quantity es number | null
@@ -72,7 +72,7 @@ export class RecipeMapper {
           ingredient.notes ?? undefined, // ✅ ingredient.note es string | null (nota: es "note" no "notes")
         ),
     );
-    const steps: RecipeStep[] = schema.steps.map((s: any) => {
+    const steps: RecipeStep[] = schema.steps.map((s: RecipeStepInterface) => {
       return new RecipeStep(
         new StepOrder(s.order ?? 1), // ✅ s.order es number | null
         new StepInstruction(s.instruction ?? 'No instruction provided'),
@@ -85,7 +85,8 @@ export class RecipeMapper {
       schema.version,
       schema.title,
       schema.description,
-      difficulty.getValue() as unknown as RecipeEntity['difficulty'],
+      (difficulty.getValue() as unknown as RecipeEntity['difficulty']) ??
+        'EASY',
       schema.estimatedTimeInMinutes,
       schema.servings,
       ingredients,

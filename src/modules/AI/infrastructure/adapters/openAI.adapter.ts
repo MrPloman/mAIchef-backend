@@ -56,7 +56,7 @@ export class OpenAIAdapter implements AIRepository {
     // const validatedRecipes = recipesArraySchema.parse(parsedData);
 
     return validatedResponse.recipes.map((recipeData: any) => {
-      return RecipeMapper.fromOpenAIToDomain(recipeData);
+      return RecipeMapper.fromAIToDomain(recipeData);
     });
   }
 
