@@ -1,7 +1,7 @@
 import { DifficultyType } from '../entities/recipe.interface';
 
 export class Difficulty {
-  private constructor(private readonly value: DifficultyType) {}
+  constructor(private readonly value: DifficultyType) {}
 
   static EASY = new Difficulty('EASY');
   static MEDIUM = new Difficulty('MEDIUM');

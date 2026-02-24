@@ -49,7 +49,7 @@ export class RecipeMapper {
       openAIData.version,
       openAIData.title,
       openAIData.description,
-      openAIData.difficulty as unknown as RecipeEntity['difficulty'],
+      new Difficulty(openAIData.difficulty),
       openAIData.estimatedTimeInMinutes,
       openAIData.servings,
       ingredients,
