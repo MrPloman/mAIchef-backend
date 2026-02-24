@@ -13,13 +13,11 @@ export class RecipeAdapter implements RecipesRepository {
     private readonly recipeRepository: Repository<RecipeSchema>,
   ) {}
 
-  async saveRecipe(recipe: Recipe): Promise<Recipe> {
+  async saveRecipe(recipe: Recipe): Promise<RecipeSchema> {
     const schema = await this.recipeRepository.create(
       RecipeMapper.toSchema(recipe),
     );
-    const saved = await this.recipeRepository.save(schema);
-    const savedRecipe = RecipeMapper.toDomain(saved);
-    console.log('Saved recipe:', savedRecipe);
+    const savedRecipe = await this.recipeRepository.save(schema);
     return savedRecipe;
   }
 }
