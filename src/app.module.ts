@@ -9,7 +9,6 @@ import { AiModule } from './modules/AI/ai.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ListsModule } from './modules/lists/lists.module';
 import { RecipesModule } from './modules/recipes/recipes.module';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
