@@ -17,7 +17,7 @@ export class UserSchema {
   @Column({ length: 255 })
   password!: string;
 
-  @Column({ nullable: true, length: 255 })
+  @Column({ nullable: false, length: 255 })
   name!: string;
 
   @CreateDateColumn({ name: 'created_at' })
