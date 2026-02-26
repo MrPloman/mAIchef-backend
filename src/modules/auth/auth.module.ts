@@ -2,11 +2,15 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
+import { LoginUseCase } from './application/use-cases/login.use-case';
+import { RegisterUseCase } from './application/use-cases/register.use-case';
+import { ResetPasswordUseCase } from './application/use-cases/reset-password.user-case';
+import { AuthAdapter } from './infrastructure/adapters/auth.adapters';
+import { JwtTokenAdapter } from './infrastructure/adapters/jwt.adapter';
+import { AuthController } from './infrastructure/controllers/auth.controller';
 import { UserSchema } from './infrastructure/persistence/typeorm/user.schema';
 import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
-
+const AUTH_USE_CASES = [LoginUseCase, RegisterUseCase, ResetPasswordUseCase];
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserSchema]),
@@ -17,7 +21,12 @@ import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
     PassportModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [
+    JwtStrategy,
+    ...AUTH_USE_CASES,
+    { provide: 'AuthRepository', useClass: AuthAdapter },
+    { provide: 'TokenRepository', useClass: JwtTokenAdapter },
+  ],
   exports: [TypeOrmModule, JwtModule],
 })
 export class AuthModule {}

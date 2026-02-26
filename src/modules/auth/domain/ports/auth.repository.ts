@@ -1,8 +1,9 @@
 import { UserLogin } from '../entities/user-login.interface';
+import { UserRegister } from '../entities/user-register.interface';
 import { UserResponse } from '../entities/user-response.interface';
-import { User } from '../entities/user.entity';
 
 export interface AuthRepository {
   loginUser(user: UserLogin): Promise<UserResponse>;
-  registerUser(user: User): Promise<UserResponse>;
+  registerUser(user: UserRegister): Promise<UserResponse>;
+  resetPassword(user: UserLogin): Promise<UserResponse>;
 }
