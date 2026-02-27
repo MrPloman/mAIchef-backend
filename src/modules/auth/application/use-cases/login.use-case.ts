@@ -16,6 +16,13 @@ export class LoginUseCase {
       ...body,
     });
 
-    return { ...user };
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      token: user.token,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
   }
 }

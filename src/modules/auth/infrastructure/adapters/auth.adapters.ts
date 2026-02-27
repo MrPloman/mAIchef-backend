@@ -1,4 +1,9 @@
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserLogin } from '../../domain/entities/user-login.interface';
@@ -26,13 +31,17 @@ export class AuthAdapter implements AuthRepository {
     const userExist = await this.authRepository.findOneBy({
       email: user.email,
     });
-    if (
-      !userExist ||
-      (await !this.bcryptRepository.compare(user.password, userExist.password))
-    ) {
-      throw new ForbiddenException();
-    }
 
+    if (!userExist) {
+      throw new NotFoundException();
+    }
+    const decryptedPassword = await this.bcryptRepository.compare(
+      user.password,
+      userExist.password,
+    );
+    if (userExist && !decryptedPassword) {
+      throw new UnauthorizedException();
+    }
     const token = await this.tokenRepository.generate({
       email: userExist.email,
     });
