@@ -1,10 +1,10 @@
 // infrastructure/adapters/jwt-token.adapter.ts
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { TokenPort } from '../../domain/ports/token.repository';
+import { TokenRepository } from '../../domain/ports/token.repository';
 
 @Injectable()
-export class JwtTokenAdapter implements TokenPort {
+export class JwtTokenAdapter implements TokenRepository {
   constructor(private readonly jwtService: JwtService) {}
 
   generate(payload: object): string {

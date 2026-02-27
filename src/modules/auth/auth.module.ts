@@ -6,6 +6,7 @@ import { LoginUseCase } from './application/use-cases/login.use-case';
 import { RegisterUseCase } from './application/use-cases/register.use-case';
 import { ResetPasswordUseCase } from './application/use-cases/reset-password.user-case';
 import { AuthAdapter } from './infrastructure/adapters/auth.adapters';
+import { BcryptAdapter } from './infrastructure/adapters/bcrypt.adapter';
 import { JwtTokenAdapter } from './infrastructure/adapters/jwt.adapter';
 import { AuthController } from './infrastructure/controllers/auth.controller';
 import { UserSchema } from './infrastructure/persistence/typeorm/user.schema';
@@ -26,6 +27,7 @@ const AUTH_USE_CASES = [LoginUseCase, RegisterUseCase, ResetPasswordUseCase];
     ...AUTH_USE_CASES,
     { provide: 'AuthRepository', useClass: AuthAdapter },
     { provide: 'TokenRepository', useClass: JwtTokenAdapter },
+    { provide: 'BcryptRepository', useClass: BcryptAdapter },
   ],
   exports: [TypeOrmModule, JwtModule],
 })

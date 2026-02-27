@@ -11,7 +11,6 @@ export class ResetPasswordUseCase {
   ) {}
 
   async execute(body: LoginDTO): Promise<UserResponse> {
-    //     const domainData = AuthMapper.toDomain(body);
     return await this.authRepository.loginUser(body);
   }
 }

@@ -16,22 +16,21 @@ export class AuthAdapter implements AuthRepository {
   ) {}
 
   async loginUser(user: UserLogin): Promise<UserResponse> {
-    //     const schema = await this.authRepository.getId(
-    // //       RecipeMapper.toSchema(recipe),
-    //     );
-    //     const savedRecipe = await this.recipeRepository.save(schema);
+    const userExist = await this.authRepository.findOneBy({
+      email: user.email,
+      password: user.password,
+    });
+    if (!userExist) {
+      throw new Error('Not Match');
+    }
     return await {
       ...new User('', '', '', '', new Date(), new Date()),
       token: '',
     };
   }
-  async registerUser(user: UserRegister): Promise<UserResponse> {
+  async registerUser(user: UserRegister): Promise<UserSchema> {
     const schema = await this.authRepository.create(user);
-    const token = '';
-    return await {
-      ...new User('', '', '', '', new Date(), new Date()),
-      token: '',
-    };
+    return { ...schema };
   }
   async resetPassword(user: UserLogin): Promise<UserResponse> {
     return await {
