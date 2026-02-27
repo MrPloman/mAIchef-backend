@@ -29,6 +29,6 @@ const AUTH_USE_CASES = [LoginUseCase, RegisterUseCase, ResetPasswordUseCase];
     { provide: 'TokenRepository', useClass: JwtTokenAdapter },
     { provide: 'BcryptRepository', useClass: BcryptAdapter },
   ],
-  exports: [TypeOrmModule, JwtModule],
+  exports: [JwtModule],
 })
 export class AuthModule {}

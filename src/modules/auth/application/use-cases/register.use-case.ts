@@ -21,6 +21,13 @@ export class RegisterUseCase {
     const token = await this.tokenRepository.generate({ email: body.email });
     const user = await this.authRepository.registerUser({ ...body, password });
 
-    return { ...user, token };
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      token,
+    };
   }
 }
