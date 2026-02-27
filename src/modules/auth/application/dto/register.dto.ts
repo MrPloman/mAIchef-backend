@@ -6,7 +6,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class LoginDTO {
+export class RegisterDTO {
   @IsString()
   @MinLength(4)
   @MaxLength(500)
@@ -17,4 +17,8 @@ export class LoginDTO {
   @MaxLength(500)
   @IsStrongPassword()
   password!: string;
+  @IsString()
+  @MinLength(2)
+  @MaxLength(500)
+  name!: string;
 }

@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserLogin } from '../../domain/entities/user-login.interface';
 import { UserRegister } from '../../domain/entities/user-register.interface';
-import { UserResponse } from '../../domain/entities/user-response.interface';
+import { UserResponse } from '../../domain/entities/user-response.class';
 import { User } from '../../domain/entities/user.entity';
 import { UserAlreadyExistsException } from '../../domain/exceptions/auth.exception';
 import { AuthRepository } from '../../domain/ports/auth.repository';

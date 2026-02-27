@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UserResponse } from '../../domain/entities/user-response.interface';
+import { UserResponse } from '../../domain/entities/user-response.class';
 import type { AuthRepository } from '../../domain/ports/auth.repository';
 import type { BcryptRepository } from '../../domain/ports/bcrypt.repository';
 import type { TokenRepository } from '../../domain/ports/token.repository';
-import { LoginDTO } from '../dto/login.dto';
+import { RegisterDTO } from '../dto/register.dto';
 
 @Injectable()
 export class RegisterUseCase {
@@ -16,18 +16,10 @@ export class RegisterUseCase {
     private readonly bcryptRepository: BcryptRepository,
   ) {}
 
-  async execute(body: LoginDTO): Promise<UserResponse> {
+  async execute(body: RegisterDTO): Promise<UserResponse> {
     const password = await this.bcryptRepository.hash(body.password);
     const token = await this.tokenRepository.generate({ email: body.email });
     const user = await this.authRepository.registerUser({ ...body, password });
-
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-      token,
-    };
+    return new UserResponse({ ...user, token });
   }
 }

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UserResponse } from '../../domain/entities/user-response.interface';
+import { UserResponse } from '../../domain/entities/user-response.class';
 import type { AuthRepository } from '../../domain/ports/auth.repository';
 import { LoginDTO } from '../dto/login.dto';
 
@@ -11,18 +11,9 @@ export class LoginUseCase {
   ) {}
 
   async execute(body: LoginDTO): Promise<UserResponse> {
-    //     const domainData = AuthMapper.toDomain(body);
     const user = await this.authRepository.loginUser({
       ...body,
     });
-
-    return {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      token: user.token,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
+    return new UserResponse(user);
   }
 }
