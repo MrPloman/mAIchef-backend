@@ -4,7 +4,7 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoginUseCase } from './application/use-cases/login.use-case';
 import { RegisterUseCase } from './application/use-cases/register.use-case';
-import { ResetPasswordUseCase } from './application/use-cases/reset-password.user-case';
+import { ResetPasswordUseCase } from './application/use-cases/reset-password.use-case';
 import { AuthAdapter } from './infrastructure/adapters/auth.adapters';
 import { BcryptAdapter } from './infrastructure/adapters/bcrypt.adapter';
 import { JwtTokenAdapter } from './infrastructure/adapters/jwt.adapter';

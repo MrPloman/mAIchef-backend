@@ -7,9 +7,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserLogin } from '../../domain/entities/user-login.interface';
+import { UserPasswordReset } from '../../domain/entities/user-password-reset.interface';
 import { UserRegister } from '../../domain/entities/user-register.interface';
 import { UserResponse } from '../../domain/entities/user-response.class';
-import { User } from '../../domain/entities/user.entity';
 import { UserAlreadyExistsException } from '../../domain/exceptions/auth.exception';
 import { AuthRepository } from '../../domain/ports/auth.repository';
 import type { BcryptRepository } from '../../domain/ports/bcrypt.repository';
@@ -59,10 +59,22 @@ export class AuthAdapter implements AuthRepository {
       throw new UserAlreadyExistsException();
     }
   }
-  async resetPassword(user: UserLogin): Promise<UserResponse> {
-    return await {
-      ...new User('', '', '', '', new Date(), new Date()),
-      token: '',
+
+  async resetPassword(user: UserPasswordReset): Promise<UserResponse> {
+    if (!this.tokenRepository.verify(user.token)) {
+      throw new UnauthorizedException();
+    }
+    const userFound = await this.authRepository.findOne({
+      where: { email: user.email },
+    });
+    if (!userFound) throw new NotFoundException();
+    userFound.password = await this.bcryptRepository.hash(user.password);
+    const userModified = await this.authRepository.save(userFound);
+    return {
+      id: userModified.id,
+      email: userModified.email,
+      name: userModified.name,
+      token: await this.tokenRepository.generate({ email: userFound.email }),
     };
   }
 }
