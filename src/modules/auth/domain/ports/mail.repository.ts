@@ -3,5 +3,5 @@
 import { MailInterface } from '../entities/mail.interface';
 
 export interface MailRepository {
-  send(plain: MailInterface): Promise<string>;
+  send(plain: MailInterface): Promise<void>;
 }

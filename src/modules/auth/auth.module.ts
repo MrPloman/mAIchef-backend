@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoginUseCase } from './application/use-cases/login.use-case';
 import { RegisterUseCase } from './application/use-cases/register.use-case';
 import { ResetPasswordUseCase } from './application/use-cases/reset-password.use-case';
-import { AuthAdapter } from './infrastructure/adapters/auth.adapters';
+import { AuthAdapter } from './infrastructure/adapters/auth.adapter';
 import { BcryptAdapter } from './infrastructure/adapters/bcrypt.adapter';
 import { JwtTokenAdapter } from './infrastructure/adapters/jwt.adapter';
 import { AuthController } from './infrastructure/controllers/auth.controller';
