@@ -2,8 +2,10 @@ import { Body, Controller, Post, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { LoginDTO } from '../../application/dto/login.dto';
 import { PasswordResetDTO } from '../../application/dto/password-reset.dto';
+import { RecoveryDTO } from '../../application/dto/recovery.dto';
 import { RegisterDTO } from '../../application/dto/register.dto';
 import { LoginUseCase } from '../../application/use-cases/login.use-case';
+import { RecoveryPasswordUseCase } from '../../application/use-cases/recovery-password.use-case';
 import { RegisterUseCase } from '../../application/use-cases/register.use-case';
 import { ResetPasswordUseCase } from '../../application/use-cases/reset-password.use-case';
 
@@ -12,6 +14,7 @@ export class AuthController {
   constructor(
     private readonly loginUseCase: LoginUseCase,
     private readonly registerUseCase: RegisterUseCase,
+    private readonly recoveryPasswordUseCase: RecoveryPasswordUseCase,
     private readonly resetPasswordUseCase: ResetPasswordUseCase,
   ) {}
   @Post('login')
@@ -24,8 +27,17 @@ export class AuthController {
     const response = await this.registerUseCase.execute(body);
     res.json(response);
   }
-  @Post('login')
-  public async resetPassword(
+
+  @Post('recovery-password')
+  public async recoveryPassword(
+    @Body() body: RecoveryDTO,
+    @Res() res: Response,
+  ) {
+    const response = await this.recoveryPasswordUseCase.execute(body);
+    res.json({ status: response });
+  }
+  @Post('reset-password')
+  public async resetPasswordEmail(
     @Body() body: PasswordResetDTO,
     @Res() res: Response,
   ) {

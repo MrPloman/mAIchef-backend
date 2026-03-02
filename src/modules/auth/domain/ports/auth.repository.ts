@@ -7,5 +7,6 @@ import { UserResponse } from '../entities/user-response.class';
 export interface AuthRepository {
   loginUser(user: UserLogin): Promise<UserResponse>;
   registerUser(user: UserRegister): Promise<UserSchema>;
+  recoveryPassword(user: { email: string }): Promise<boolean>;
   resetPassword(user: UserPasswordReset): Promise<UserResponse>;
 }

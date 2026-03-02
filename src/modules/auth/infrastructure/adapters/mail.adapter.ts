@@ -20,23 +20,25 @@ export class MailAdapter implements MailRepository {
     // reset-template
     const resetUrl = `${this.config.get('FRONTEND_APP_URL')}/${mailParams.template}${mailParams.template && `?token=${mailParams.token}`}`;
 
-    const html = await render(
-      React.createElement(ResetPasswordTemplate, {
-        username: mailParams.email,
-        resetUrl,
-      }),
-    );
-    const { error } = await this.resend.emails.send({
-      from: 'Mi App <no-reply@miapp.com>',
-      to: mailParams.email,
-      subject: 'Recupera tu contraseña',
-      html,
-    });
-
-    if (error) {
-      this.logger.error('Error enviando email de recuperación', error);
-      throw new Error('No se pudo enviar el email');
+    if (mailParams.template === 'reset-password') {
+      let html = await render(
+        React.createElement(ResetPasswordTemplate, {
+          username: mailParams.email,
+          resetUrl,
+        }),
+      );
+      const { error } = await this.resend.emails.send({
+        from: 'onboarding@resend.dev',
+        to: 'polplanaayet@gmail.com',
+        subject: mailParams.subject,
+        html,
+      });
+      if (error) {
+        this.logger.error('Error enviando email de recuperación', error);
+        throw new Error('No se pudo enviar el email');
+      }
     }
+
     return;
   }
 }

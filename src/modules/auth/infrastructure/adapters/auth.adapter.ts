@@ -13,6 +13,7 @@ import { UserResponse } from '../../domain/entities/user-response.class';
 import { UserAlreadyExistsException } from '../../domain/exceptions/auth.exception';
 import { AuthRepository } from '../../domain/ports/auth.repository';
 import type { BcryptRepository } from '../../domain/ports/bcrypt.repository';
+import type { MailRepository } from '../../domain/ports/mail.repository';
 import type { TokenRepository } from '../../domain/ports/token.repository';
 import { UserSchema } from '../persistence/typeorm/user.schema';
 
@@ -25,6 +26,8 @@ export class AuthAdapter implements AuthRepository {
     private readonly bcryptRepository: BcryptRepository,
     @Inject('TokenRepository')
     private readonly tokenRepository: TokenRepository,
+    @Inject('MailRepository')
+    private readonly mailRepository: MailRepository,
   ) {}
 
   async loginUser(user: UserLogin): Promise<UserResponse> {
@@ -58,6 +61,20 @@ export class AuthAdapter implements AuthRepository {
     } else {
       throw new UserAlreadyExistsException();
     }
+  }
+
+  async recoveryPassword(user: { email: string }): Promise<boolean> {
+    const _user = await this.authRepository.findOneBy({ email: user.email });
+    if (_user) {
+      await this.mailRepository.send({
+        email: user.email,
+        subject: 'hey',
+        content: '',
+        template: 'reset-password',
+        token: await this.tokenRepository.generate({ email: user.email }),
+      });
+      return await true;
+    } else return await false;
   }
 
   async resetPassword(user: UserPasswordReset): Promise<UserResponse> {
