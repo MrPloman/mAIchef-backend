@@ -4,6 +4,8 @@ import { LoginDTO } from '../../application/dto/login.dto';
 import { PasswordResetDTO } from '../../application/dto/password-reset.dto';
 import { RecoveryDTO } from '../../application/dto/recovery.dto';
 import { RegisterDTO } from '../../application/dto/register.dto';
+import { SessionDTO } from '../../application/dto/session.dto';
+import { CheckSessionUseCase } from '../../application/use-cases/check-session.use-case';
 import { LoginUseCase } from '../../application/use-cases/login.use-case';
 import { RecoveryPasswordUseCase } from '../../application/use-cases/recovery-password.use-case';
 import { RegisterUseCase } from '../../application/use-cases/register.use-case';
@@ -16,6 +18,7 @@ export class AuthController {
     private readonly registerUseCase: RegisterUseCase,
     private readonly recoveryPasswordUseCase: RecoveryPasswordUseCase,
     private readonly resetPasswordUseCase: ResetPasswordUseCase,
+    private readonly checkSessionUseCase: CheckSessionUseCase,
   ) {}
   @Post('login')
   public async login(@Body() body: LoginDTO, @Res() res: Response) {
@@ -28,7 +31,7 @@ export class AuthController {
     res.json(response);
   }
 
-  @Post('recovery-password')
+  @Post('recovery')
   public async recoveryPassword(
     @Body() body: RecoveryDTO,
     @Res() res: Response,
@@ -36,12 +39,17 @@ export class AuthController {
     const response = await this.recoveryPasswordUseCase.execute(body);
     res.json({ status: response });
   }
-  @Post('reset-password')
+  @Post('reset')
   public async resetPasswordEmail(
     @Body() body: PasswordResetDTO,
     @Res() res: Response,
   ) {
     const response = await this.resetPasswordUseCase.execute(body);
+    res.json(response);
+  }
+  @Post('session')
+  public async session(@Body() body: SessionDTO, @Res() res: Response) {
+    const response = await this.checkSessionUseCase.execute(body);
     res.json(response);
   }
 }

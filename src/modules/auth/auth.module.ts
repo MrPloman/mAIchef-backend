@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CheckSessionUseCase } from './application/use-cases/check-session.use-case';
 import { LoginUseCase } from './application/use-cases/login.use-case';
 import { RecoveryPasswordUseCase } from './application/use-cases/recovery-password.use-case';
 import { RegisterUseCase } from './application/use-cases/register.use-case';
@@ -18,6 +19,7 @@ const AUTH_USE_CASES = [
   RegisterUseCase,
   RecoveryPasswordUseCase,
   ResetPasswordUseCase,
+  CheckSessionUseCase,
 ];
 @Module({
   imports: [

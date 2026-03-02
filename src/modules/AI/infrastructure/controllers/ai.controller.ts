@@ -14,7 +14,7 @@ export class AIController {
     private readonly saveRecipeUseCase: SaveRecipeUseCase,
   ) {}
   @UseGuards(OptionalJwtAuthGuard)
-  @Post('generateRecipe')
+  @Post('generate')
   async generateRecipe(@Body() body: RecipePromptDTO, @Res() res: Response) {
     const aiRecipes: RecipeEntity[] =
       await this.generateRecipeUseCase.execute(body);
@@ -27,7 +27,7 @@ export class AIController {
     );
     return res.json(storedRecipes);
   }
-  @Post('replanRecipe')
+  @Post('replan')
   public async replanRecipe() {
     return 'entra again';
   }

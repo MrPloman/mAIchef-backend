@@ -1,4 +1,5 @@
 import { UserSchema } from '../../infrastructure/persistence/typeorm/user.schema';
+import { SessionInterface } from '../entities/session.interface';
 import { UserLogin } from '../entities/user-login.interface';
 import { UserPasswordReset } from '../entities/user-password-reset.interface';
 import { UserRegister } from '../entities/user-register.interface';
@@ -9,4 +10,5 @@ export interface AuthRepository {
   registerUser(user: UserRegister): Promise<UserSchema>;
   recoveryPassword(user: { email: string }): Promise<boolean>;
   resetPassword(user: UserPasswordReset): Promise<UserResponse>;
+  checkSession(session: SessionInterface): Promise<UserResponse>;
 }

@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
@@ -6,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { SessionInterface } from '../../domain/entities/session.interface';
 import { UserLogin } from '../../domain/entities/user-login.interface';
 import { UserPasswordReset } from '../../domain/entities/user-password-reset.interface';
 import { UserRegister } from '../../domain/entities/user-register.interface';
@@ -54,7 +56,6 @@ export class AuthAdapter implements AuthRepository {
     const userExist = await this.authRepository.findOneBy({
       email: user.email,
     });
-    console.log(userExist);
     if (!userExist) {
       const schema = await this.authRepository.save(user);
       return { ...schema };
@@ -92,6 +93,21 @@ export class AuthAdapter implements AuthRepository {
       email: userModified.email,
       name: userModified.name,
       token: await this.tokenRepository.generate({ email: userFound.email }),
+    };
+  }
+
+  async checkSession(session: SessionInterface): Promise<UserResponse> {
+    const _user = await this.authRepository.findOneBy({
+      email: session.email,
+    });
+    if (!_user) throw new NotFoundException();
+    const _token = await this.tokenRepository.verify(session.token);
+    if (!_token) throw new ForbiddenException();
+    return {
+      email: _user.email,
+      id: _user.id,
+      name: _user.name,
+      token: session.token,
     };
   }
 }
