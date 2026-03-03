@@ -13,7 +13,10 @@ export class RecipeAdapter implements RecipesRepository {
     private readonly recipeRepository: Repository<RecipeSchema>,
   ) {}
 
-  async saveRecipe(recipe: RecipeEntity): Promise<RecipeSchema> {
+  async saveRecipe(
+    recipe: RecipeEntity,
+    userId: string,
+  ): Promise<RecipeSchema> {
     const schema = await this.recipeRepository.create(
       RecipeMapper.toSchema(recipe),
     );
