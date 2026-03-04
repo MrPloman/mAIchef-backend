@@ -4,6 +4,7 @@ import { RecipesRepository } from 'src/modules/recipes/domain/ports/recipes.repo
 import { RecipeEntity } from 'src/shared/domain/entities/recipe.entity';
 import { RecipeMapper } from 'src/shared/infrastructure/persistence/recipe.mapper';
 import { Repository } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid'; // Import uuid v4
 import { RecipeSchema } from './recipe.schema';
 
 @Injectable()
@@ -22,5 +23,13 @@ export class RecipeAdapter implements RecipesRepository {
     );
     const savedRecipe = await this.recipeRepository.save(schema);
     return savedRecipe;
+  }
+
+  async generateRecipeInstance(recipe: RecipeEntity): Promise<RecipeSchema> {
+    const schema = await this.recipeRepository.create(
+      RecipeMapper.toSchema(recipe),
+    );
+    schema._id = uuidv4();
+    return schema;
   }
 }

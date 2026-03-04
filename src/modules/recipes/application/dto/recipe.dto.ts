@@ -12,6 +12,7 @@ import { Difficulty } from 'src/shared/domain/value-objects/difficulty.vo';
 import { Ingredient } from 'src/shared/domain/value-objects/ingredient.vo';
 
 export class RecipeDTO {
+  @IsOptional()
   @IsString()
   @IsUUID()
   _id!: string;

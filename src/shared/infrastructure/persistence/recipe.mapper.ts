@@ -5,6 +5,7 @@ import {
   RecipeStepInterface,
 } from 'src/shared/domain/entities/recipe.interface';
 import { Ingredient } from 'src/shared/domain/value-objects/ingredient.vo';
+import { Unit } from 'src/shared/domain/value-objects/unit.vo';
 import { RecipeSchema } from '../../../modules/recipes/infrastructure/persistence/typeorm/recipe.schema';
 import { RecipeEntity } from '../../domain/entities/recipe.entity';
 import { DifficultyTypeEnum } from '../../domain/enums/difficulty-type.enum';
@@ -21,9 +22,13 @@ export class RecipeMapper {
     const ingredients: Ingredient[] = openAIData.ingredients.map(
       (ingredient: IngredientInterface) => {
         const _ingredient = {
-          name: ingredient.name,
-          quantity: ingredient.quantity ? Number(ingredient.quantity) : 0,
-          unit: ingredient.unit ? String(ingredient.unit).toUpperCase() : 'G',
+          name: new IngredientName(ingredient.name),
+          quantity: ingredient.quantity
+            ? new Quantity(ingredient.quantity)
+            : new Quantity(0),
+          unit: ingredient.unit
+            ? new Unit(ingredient.unit as UnitTypeEnum)
+            : 'G',
           notes: ingredient.notes ?? undefined,
         };
         return _ingredient as any as Ingredient;
@@ -33,11 +38,11 @@ export class RecipeMapper {
     const steps: RecipeStep[] = openAIData.steps.map(
       (s: RecipeStepInterface) => {
         const _step = {
-          order: s.order ? Number(s.order) : 1,
+          order: new StepOrder(s.order),
           instruction: s.instruction
-            ? String(s.instruction)
-            : 'No instruction provided',
-          duration: s.duration ? Number(s.duration) : 0,
+            ? new StepInstruction(s.instruction)
+            : new StepInstruction('No instruction provided'),
+          duration: s.duration ? new Duration(s.duration) : new Duration(0),
           tips: s.tips ?? [],
         };
         return _step as any as RecipeStep;
@@ -67,7 +72,7 @@ export class RecipeMapper {
           new IngredientName(ingredient.name), // ✅ ingredient.name es string
           new Quantity(ingredient.quantity ?? 0), // ✅ ingredient.quantity es number | null
           ingredient.unit
-            ? UnitTypeEnum[ingredient.unit.toUpperCase()]
+            ? new Unit[ingredient.unit.toUpperCase()]()
             : undefined, // ✅ ingredient.unit es string | null
           ingredient.notes ?? undefined, // ✅ ingredient.note es string | null (nota: es "note" no "notes")
         ),
@@ -100,13 +105,24 @@ export class RecipeMapper {
   static toSchema(recipe: RecipeEntity): Partial<RecipeSchema> {
     const difficultyValue: DifficultyTypeEnum =
       recipe.difficulty.getValue() as DifficultyTypeEnum;
+
+    const ingredients: any[] = recipe.ingredients.map(
+      (ingredient: Ingredient) => {
+        return {
+          name: ingredient.name.getValue(), // ✅ ingredient.name es string
+          quantity: ingredient.quantity?.getValue(), // ✅ ingredient.quantity es number | null
+          unit: ingredient.unit?.getValue(), // ✅ ingredient.unit es string | null
+          notes: ingredient.notes ?? undefined, // ✅ ingredient.note es string | null (nota: es "note" no "notes")
+        };
+      },
+    );
     const schema: Partial<RecipeSchema> = {
       title: recipe.title,
       description: recipe.description,
       difficulty: difficultyValue,
       estimatedTimeInMinutes: recipe.estimatedTimeInMinutes,
       servings: recipe.servings,
-      ingredients: recipe.ingredients,
+      ingredients: ingredients,
       steps: recipe.steps,
       createdAt: recipe.createdAt,
     };
@@ -135,7 +151,7 @@ export class RecipeMapper {
       ingredients: recipe.ingredients.map((ingredient) => ({
         name: ingredient.name.getValue(),
         quantity: ingredient.quantity ? ingredient.quantity.getValue() : 1,
-        unit: ingredient.unit ? ingredient.unit : undefined,
+        unit: ingredient.unit ? ingredient.unit.getValue() : undefined,
         notes: ingredient.notes ?? undefined,
       })),
       steps: recipe.steps.map((step) => ({
