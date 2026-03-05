@@ -19,7 +19,7 @@ export class RecipeAdapter implements RecipesRepository {
     userId: string,
   ): Promise<RecipeSchema> {
     const schema = await this.recipeRepository.create(
-      RecipeMapper.toSchema(recipe),
+      RecipeMapper.fromDomaintoSchema(recipe),
     );
     const savedRecipe = await this.recipeRepository.save(schema);
     return savedRecipe;
@@ -27,7 +27,7 @@ export class RecipeAdapter implements RecipesRepository {
 
   async generateRecipeInstance(recipe: RecipeEntity): Promise<RecipeSchema> {
     const schema = await this.recipeRepository.create(
-      RecipeMapper.toSchema(recipe),
+      RecipeMapper.fromDomaintoSchema(recipe),
     );
     schema._id = uuidv4();
     return schema;

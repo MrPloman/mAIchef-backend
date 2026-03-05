@@ -14,6 +14,7 @@ export class PromptRecipeUseCase {
 
   async execute(body: RecipePromptDTO): Promise<RecipeEntity[]> {
     const domainData = RecipePromptMapper.toDomain(body);
-    return await this.aiRepository.getGeneratedRecipe(domainData);
+    const recipes = await this.aiRepository.getGeneratedRecipe(domainData);
+    return recipes;
   }
 }
