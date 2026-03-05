@@ -17,7 +17,7 @@ import { Quantity } from '../../domain/value-objects/quantity.vo';
 import { StepInstruction } from '../../domain/value-objects/step-instruction.vo';
 import { StepOrder } from '../../domain/value-objects/step-order.vo';
 export class RecipeMapper {
-  static fromAIToDomain(AIData: RecipeInterface): RecipeEntity {
+  static fromAIToDomain(AIData: any): RecipeEntity {
     const difficulty = AIData.difficulty
       ? new Difficulty(AIData.difficulty)
       : new Difficulty('EASY');
@@ -31,7 +31,9 @@ export class RecipeMapper {
           quantity: ingredient.quantity
             ? new Quantity(ingredient.quantity)
             : new Quantity(0),
-          unit: ingredient.unit
+          unit: Object.values(UnitTypeEnum).includes(
+            ingredient.unit as UnitTypeEnum,
+          )
             ? new Unit(ingredient.unit as UnitTypeEnum)
             : new Unit(UnitTypeEnum.G),
           notes: ingredient.notes ?? '',
@@ -141,6 +143,15 @@ export class RecipeMapper {
         };
       },
     );
+    const steps: any[] = recipe.steps.map((step: RecipeStep) => {
+      return {
+        order: step.order.getValue(),
+        duration: step.duration.getValue(),
+        instruction: step.instruction.getValue(),
+        tips: step.tips ?? [],
+      };
+    });
+
     const schema: Partial<RecipeSchema> = {
       title: recipe.title,
       description: recipe.description,
@@ -148,7 +159,7 @@ export class RecipeMapper {
       estimatedTimeInMinutes: recipe.estimatedTimeInMinutes,
       servings: recipe.servings,
       ingredients: ingredients,
-      steps: recipe.steps,
+      steps: steps,
       createdAt: recipe.createdAt,
     };
 

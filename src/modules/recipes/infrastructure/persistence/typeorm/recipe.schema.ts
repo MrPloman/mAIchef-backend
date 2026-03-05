@@ -1,3 +1,4 @@
+import { IsEnum } from 'class-validator';
 import { RecipeStep } from 'src/shared/domain/entities/recipe-step.model';
 import { DifficultyTypeEnum } from 'src/shared/domain/enums/difficulty-type.enum';
 import { UnitTypeEnum } from 'src/shared/domain/enums/unit-type.enum';
@@ -20,7 +21,7 @@ export class RecipeSchema {
   @PrimaryGeneratedColumn('uuid')
   _id!: string;
 
-  @VersionColumn()
+  @VersionColumn({ default: 1 })
   version!: number;
 
   @Column({ length: 255 })
@@ -29,6 +30,7 @@ export class RecipeSchema {
   @Column({ type: 'text' })
   description!: string;
 
+  @IsEnum(DifficultyTypeEnum)
   @Column({
     type: 'enum',
     enum: DifficultyTypeEnum,

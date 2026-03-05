@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsDate,
@@ -8,7 +9,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import { RecipeStep } from 'src/shared/domain/entities/recipe-step.model';
-import { Difficulty } from 'src/shared/domain/value-objects/difficulty.vo';
+import { DifficultyTypeEnum } from 'src/shared/domain/enums/difficulty-type.enum';
 import { Ingredient } from 'src/shared/domain/value-objects/ingredient.vo';
 
 export class RecipeDTO {
@@ -26,8 +27,8 @@ export class RecipeDTO {
   @IsString()
   description!: string;
 
-  @IsEnum(Difficulty)
-  difficulty!: Difficulty;
+  @IsEnum(DifficultyTypeEnum)
+  difficulty!: DifficultyTypeEnum;
 
   @IsNumber()
   estimatedTimeInMinutes!: number;
@@ -42,6 +43,7 @@ export class RecipeDTO {
   steps!: RecipeStep[];
 
   @IsDate()
+  @Type(() => Date)
   createdAt!: Date;
 
   @IsOptional()

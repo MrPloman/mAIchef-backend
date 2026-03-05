@@ -54,7 +54,6 @@ export class OpenAIAdapter implements AIRepository {
 
     // Validar con Zod
     return validatedResponse.recipes.map((recipeData: any) => {
-      console.log(recipeData);
       return RecipeMapper.fromAIToDomain(recipeData);
     });
   }
