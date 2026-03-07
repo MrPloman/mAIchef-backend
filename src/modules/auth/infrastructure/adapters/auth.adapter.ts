@@ -78,8 +78,11 @@ export class AuthAdapter implements AuthRepository {
     } else return await false;
   }
 
-  async resetPassword(user: UserPasswordReset): Promise<UserResponse> {
-    if (!this.tokenRepository.verify(user.token)) {
+  async resetPassword(
+    user: UserPasswordReset,
+    token: string,
+  ): Promise<UserResponse> {
+    if (this.tokenRepository.verify(token)) {
       throw new UnauthorizedException();
     }
     const userFound = await this.authRepository.findOne({

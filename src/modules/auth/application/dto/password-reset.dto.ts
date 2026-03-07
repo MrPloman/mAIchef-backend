@@ -17,6 +17,4 @@ export class PasswordResetDTO {
   @MaxLength(500)
   @IsStrongPassword()
   password!: string;
-  @IsString()
-  token!: string;
 }

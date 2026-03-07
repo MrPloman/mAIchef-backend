@@ -5,7 +5,7 @@ import type { RecipesRepository } from '../../domain/ports/recipes.repository';
 import { RecipeSchema } from '../../infrastructure/persistence/typeorm/recipe.schema';
 
 @Injectable()
-export class GenerateRecipeUseCase {
+export class GenerateRecipeInstanceUseCase {
   constructor(
     @Inject('RecipesRepository')
     private readonly recipesRepository: RecipesRepository,

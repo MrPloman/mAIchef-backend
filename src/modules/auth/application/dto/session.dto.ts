@@ -4,6 +4,4 @@ export class SessionDTO {
   @IsEmail()
   @IsString()
   email!: string;
-  @IsString()
-  token!: string;
 }

@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import type { Response } from 'express';
-import { GenerateRecipeUseCase } from 'src/modules/recipes/application/use-cases/generate-recipe.use-case';
+import { GenerateRecipeInstanceUseCase } from 'src/modules/recipes/application/use-cases/generate-recipe-instance.use-case';
 import { SaveRecipeUseCase } from 'src/modules/recipes/application/use-cases/save-recipe.use-case';
 import { RecipeSchema } from 'src/modules/recipes/infrastructure/persistence/typeorm/recipe.schema';
 import { RecipeEntity } from 'src/shared/domain/entities/recipe.entity';
@@ -12,7 +12,7 @@ export class AIController {
   constructor(
     private readonly generateRecipeUseCase: PromptRecipeUseCase,
     private readonly saveRecipeUseCase: SaveRecipeUseCase,
-    private readonly generateRecipeInstanceUseCase: GenerateRecipeUseCase,
+    private readonly generateRecipeInstanceUseCase: GenerateRecipeInstanceUseCase,
   ) {}
   @Post('generate')
   async generateRecipe(@Body() body: RecipePromptDTO, @Res() res: Response) {

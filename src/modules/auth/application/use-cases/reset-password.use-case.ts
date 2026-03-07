@@ -10,7 +10,7 @@ export class ResetPasswordUseCase {
     private readonly authRepository: AuthRepository,
   ) {}
 
-  async execute(body: UserPasswordReset): Promise<UserResponse> {
-    return await this.authRepository.resetPassword(body);
+  async execute(body: UserPasswordReset, token: string): Promise<UserResponse> {
+    return await this.authRepository.resetPassword(body, token);
   }
 }

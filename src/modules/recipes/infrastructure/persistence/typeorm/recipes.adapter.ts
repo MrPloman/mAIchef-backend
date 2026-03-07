@@ -24,6 +24,9 @@ export class RecipeAdapter implements RecipesRepository {
     const savedRecipe = await this.recipeRepository.save(schema);
     return savedRecipe;
   }
+  async removeRecipe(recipeId: string, userId: string): Promise<boolean> {
+    return true;
+  }
 
   async generateRecipeInstance(recipe: RecipeEntity): Promise<RecipeSchema> {
     const schema = await this.recipeRepository.create(
