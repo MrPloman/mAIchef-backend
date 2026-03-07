@@ -1,6 +1,5 @@
-import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
 import type { Response } from 'express';
-import { OptionalJwtAuthGuard } from 'src/modules/auth/infrastructure/guards/optional-jwt-auth.guard';
 import { GenerateRecipeUseCase } from 'src/modules/recipes/application/use-cases/generate-recipe.use-case';
 import { SaveRecipeUseCase } from 'src/modules/recipes/application/use-cases/save-recipe.use-case';
 import { RecipeSchema } from 'src/modules/recipes/infrastructure/persistence/typeorm/recipe.schema';
@@ -15,7 +14,6 @@ export class AIController {
     private readonly saveRecipeUseCase: SaveRecipeUseCase,
     private readonly generateRecipeInstanceUseCase: GenerateRecipeUseCase,
   ) {}
-  @UseGuards(OptionalJwtAuthGuard)
   @Post('generate')
   async generateRecipe(@Body() body: RecipePromptDTO, @Res() res: Response) {
     const aiRecipes: RecipeEntity[] =

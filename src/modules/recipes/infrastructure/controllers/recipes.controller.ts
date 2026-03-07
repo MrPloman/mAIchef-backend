@@ -1,5 +1,6 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
+import { JwtAuthGuard } from 'src/shared/infrastructure/guards/jwt-auth.guard';
 import { RecipeMapper } from 'src/shared/infrastructure/persistence/recipe.mapper';
 import { SaveRecipeDTO } from '../../application/dto/save-recipe.dto';
 import { SaveRecipeUseCase } from '../../application/use-cases/save-recipe.use-case';
@@ -7,6 +8,7 @@ import { SaveRecipeUseCase } from '../../application/use-cases/save-recipe.use-c
 @Controller('recipes')
 export class RecipesController {
   constructor(private readonly saveRecipeUseCase: SaveRecipeUseCase) {}
+  @UseGuards(JwtAuthGuard)
   @Post('save-recipe')
   public async saveRecipe(@Body() body: SaveRecipeDTO, @Res() res: Response) {
     const recipe = RecipeMapper.fromAIToDomain(body.recipe);
