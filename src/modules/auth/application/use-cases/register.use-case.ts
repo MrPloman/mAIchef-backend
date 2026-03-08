@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
+import type { TokenRepository } from '../../../../shared/domain/ports/token.repository';
 import { UserResponse } from '../../domain/entities/user-response.class';
 import type { AuthRepository } from '../../domain/ports/auth.repository';
 import type { BcryptRepository } from '../../domain/ports/bcrypt.repository';
-import type { TokenRepository } from '../../domain/ports/token.repository';
 import { RegisterDTO } from '../dto/register.dto';
 
 @Injectable()

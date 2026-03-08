@@ -61,8 +61,13 @@ export class AuthController {
 
   @Post('session')
   @UseGuards(JwtAuthGuard)
-  public async session(@Body() body: SessionDTO, @Res() res: Response) {
-    const response = await this.checkSessionUseCase.execute(body);
+  public async session(
+    @Body() body: SessionDTO,
+    @Headers('authorization') auth: string,
+    @Res() res: Response,
+  ) {
+    const token = auth?.replace('Bearer ', '');
+    const response = await this.checkSessionUseCase.execute(body, token);
     res.json(response);
   }
 }

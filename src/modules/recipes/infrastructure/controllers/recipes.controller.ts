@@ -1,4 +1,11 @@
-import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Headers,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import type { Response } from 'express';
 import { JwtAuthGuard } from 'src/shared/infrastructure/guards/jwt-auth.guard';
 import { RecipeMapper } from 'src/shared/infrastructure/persistence/recipe.mapper';
@@ -15,9 +22,18 @@ export class RecipesController {
   ) {}
   @UseGuards(JwtAuthGuard)
   @Post('save-recipe')
-  public async saveRecipe(@Body() body: SaveRecipeDTO, @Res() res: Response) {
+  public async saveRecipe(
+    @Body() body: SaveRecipeDTO,
+    @Headers('authorization') auth: string,
+    @Res() res: Response,
+  ) {
+    const token = auth?.replace('Bearer ', '');
     const recipe = RecipeMapper.fromAIToDomain(body.recipe);
-    const response = await this.saveRecipeUseCase.execute(recipe, body.userId);
+    const response = await this.saveRecipeUseCase.execute(
+      recipe,
+      body.userId,
+      token,
+    );
     res.json(response);
   }
 
@@ -25,11 +41,14 @@ export class RecipesController {
   @Post('remove-recipe')
   public async removeRecipe(
     @Body() body: RemoveRecipeDTO,
+    @Headers('authorization') auth: string,
     @Res() res: Response,
   ) {
+    const token = auth?.replace('Bearer ', '');
     const response = await this.removeRecipeUseCase.execute(
       body.recipeId,
       body.userId,
+      token,
     );
     res.json(response);
   }

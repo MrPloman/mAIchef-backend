@@ -10,8 +10,11 @@ export class CheckSessionUseCase {
     private readonly authRepository: AuthRepository,
   ) {}
 
-  async execute(body: SessionDTO): Promise<UserResponse> {
-    const _user = await this.authRepository.checkSession(body);
+  async execute(body: SessionDTO, token: string): Promise<UserResponse> {
+    const _user = await this.authRepository.checkSession({
+      email: body.email,
+      token,
+    });
     return _user;
   }
 }

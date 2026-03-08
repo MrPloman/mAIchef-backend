@@ -3,5 +3,5 @@ export const TOKEN_PORT = 'TOKEN_PORT';
 
 export interface TokenRepository {
   generate(payload: object): string;
-  verify(token: string): object | null;
+  verify(token: string): { email: string; iat: number; exp: number } | null;
 }

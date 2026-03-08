@@ -9,7 +9,11 @@ export class RemoveRecipeUseCase {
     private readonly recipesRepository: RecipesRepository,
   ) {}
 
-  async execute(recipeId: string, userId: string): Promise<boolean> {
-    return await this.recipesRepository.removeRecipe(recipeId, userId);
+  async execute(
+    recipeId: string,
+    userId: string,
+    token: string,
+  ): Promise<boolean> {
+    return await this.recipesRepository.removeRecipe(recipeId, userId, token);
   }
 }

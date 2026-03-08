@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import type { TokenRepository } from '../../../../shared/domain/ports/token.repository';
 import { SessionInterface } from '../../domain/entities/session.interface';
 import { UserLogin } from '../../domain/entities/user-login.interface';
 import { UserPasswordReset } from '../../domain/entities/user-password-reset.interface';
@@ -16,7 +17,6 @@ import { UserAlreadyExistsException } from '../../domain/exceptions/auth.excepti
 import { AuthRepository } from '../../domain/ports/auth.repository';
 import type { BcryptRepository } from '../../domain/ports/bcrypt.repository';
 import type { MailRepository } from '../../domain/ports/mail.repository';
-import type { TokenRepository } from '../../domain/ports/token.repository';
 import { UserSchema } from '../persistence/typeorm/user.schema';
 
 @Injectable()
@@ -82,7 +82,8 @@ export class AuthAdapter implements AuthRepository {
     user: UserPasswordReset,
     token: string,
   ): Promise<UserResponse> {
-    if (this.tokenRepository.verify(token)) {
+    const _userVerified = this.tokenRepository.verify(token);
+    if (!_userVerified || _userVerified?.email !== user.email) {
       throw new UnauthorizedException();
     }
     const userFound = await this.authRepository.findOne({
@@ -95,7 +96,7 @@ export class AuthAdapter implements AuthRepository {
       id: userModified.id,
       email: userModified.email,
       name: userModified.name,
-      token: await this.tokenRepository.generate({ email: userFound.email }),
+      token: token,
     };
   }
 

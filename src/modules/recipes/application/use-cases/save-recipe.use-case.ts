@@ -11,7 +11,11 @@ export class SaveRecipeUseCase {
     private readonly recipesRepository: RecipesRepository,
   ) {}
 
-  async execute(recipe: RecipeEntity, userId: string): Promise<RecipeSchema> {
-    return await this.recipesRepository.saveRecipe(recipe, userId);
+  async execute(
+    recipe: RecipeEntity,
+    userId: string,
+    token: string,
+  ): Promise<RecipeSchema> {
+    return await this.recipesRepository.saveRecipe(recipe, userId, token);
   }
 }

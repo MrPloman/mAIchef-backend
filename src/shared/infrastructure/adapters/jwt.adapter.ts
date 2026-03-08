@@ -11,9 +11,13 @@ export class JwtTokenAdapter implements TokenRepository {
     return this.jwtService.sign(payload);
   }
 
-  verify(token: string): object | null {
+  verify(token: string): { email: string; iat: number; exp: number } | null {
     try {
-      return this.jwtService.verify(token);
+      return this.jwtService.verify<{
+        email: string;
+        iat: number;
+        exp: number;
+      }>(token);
     } catch {
       return null;
     }
