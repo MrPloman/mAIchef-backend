@@ -1,4 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RecipesRepository } from 'src/modules/recipes/domain/ports/recipes.repository';
 import { RecipeEntity } from 'src/shared/domain/entities/recipe.entity';
@@ -17,22 +24,83 @@ export class RecipeAdapter implements RecipesRepository {
     private readonly tokenRepository: TokenRepository,
   ) {}
 
+  async getAllUserRecipes(
+    userId: string,
+    token: string,
+  ): Promise<RecipeSchema[]> {
+    const _token = this.tokenRepository.verify(token);
+    if (!_token || _token.id !== userId) {
+      throw new UnauthorizedException();
+    }
+    const foundRecipes = await this.recipeRepository.findBy({
+      userId: userId,
+    });
+    if (!foundRecipes || foundRecipes.length === 0) {
+      throw new HttpException('No recipes found.', HttpStatus.CONFLICT);
+    }
+
+    return foundRecipes;
+  }
+
+  async getRecipe(
+    recipeId: string,
+    userId: string,
+    token: string,
+  ): Promise<RecipeSchema> {
+    const _token = this.tokenRepository.verify(token);
+    if (!_token || _token.id !== userId) {
+      throw new UnauthorizedException();
+    }
+    const foundRecipe = await this.recipeRepository.findOneBy({
+      _id: recipeId,
+      userId: userId,
+    });
+    if (!foundRecipe) {
+      throw new HttpException('No recipe found.', HttpStatus.CONFLICT);
+    }
+
+    return foundRecipe;
+  }
+
   async saveRecipe(
     recipe: RecipeEntity,
     userId: string,
     token: string,
   ): Promise<RecipeSchema> {
+    const _token = this.tokenRepository.verify(token);
+    if (!_token || _token.id !== userId) {
+      throw new UnauthorizedException();
+    }
+    const foundRecipe = await this.recipeRepository.findOneBy({
+      _id: recipe._id,
+      userId: userId,
+    });
+    if (foundRecipe) {
+      throw new HttpException(
+        'The recipe was already saved. For modification use update.',
+        HttpStatus.CONFLICT,
+      );
+    }
     const schema = await this.recipeRepository.create(
       RecipeMapper.fromDomaintoSchema({ ...recipe, userId: userId }),
     );
     const savedRecipe = await this.recipeRepository.save(schema);
     return savedRecipe;
   }
+
   async removeRecipe(
     recipeId: string,
     userId: string,
     token: string,
   ): Promise<boolean> {
+    const _token = this.tokenRepository.verify(token);
+    if (!_token || _token.id !== userId) {
+      throw new UnauthorizedException();
+    }
+    const schema = await this.recipeRepository.delete({ _id: recipeId });
+    if (schema.affected === 0) {
+      throw new NotFoundException('Recipe Not Found');
+    }
     return true;
   }
 

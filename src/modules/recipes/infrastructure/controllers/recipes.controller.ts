@@ -50,6 +50,6 @@ export class RecipesController {
       body.userId,
       token,
     );
-    res.json(response);
+    if (response) res.json({ token: token, status: true });
   }
 }
