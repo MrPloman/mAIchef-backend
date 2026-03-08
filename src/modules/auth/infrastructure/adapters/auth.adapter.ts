@@ -49,6 +49,7 @@ export class AuthAdapter implements AuthRepository {
     }
     const token = await this.tokenRepository.generate({
       email: userExist.email,
+      id: userExist.id,
     });
     return { ...userExist, token: token };
   }
@@ -72,7 +73,10 @@ export class AuthAdapter implements AuthRepository {
         subject: 'hey',
         content: '',
         template: 'reset-password',
-        token: await this.tokenRepository.generate({ email: user.email }),
+        token: await this.tokenRepository.generate({
+          email: user.email,
+          id: _user.id,
+        }),
       });
       return await true;
     } else return await false;

@@ -18,8 +18,12 @@ export class RegisterUseCase {
 
   async execute(body: RegisterDTO): Promise<UserResponse> {
     const password = await this.bcryptRepository.hash(body.password);
-    const token = await this.tokenRepository.generate({ email: body.email });
     const user = await this.authRepository.registerUser({ ...body, password });
+    const token = await this.tokenRepository.generate({
+      email: body.email,
+      id: user.id,
+    });
+
     return new UserResponse({ ...user, token });
   }
 }

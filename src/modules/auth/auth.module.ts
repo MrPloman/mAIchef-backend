@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtTokenAdapter } from '../../shared/infrastructure/adapters/jwt.adapter';
+import { SharedModule } from 'src/shared/shared.module';
 import { CheckSessionUseCase } from './application/use-cases/check-session.use-case';
 import { LoginUseCase } from './application/use-cases/login.use-case';
 import { RecoveryPasswordUseCase } from './application/use-cases/recovery-password.use-case';
@@ -21,22 +19,14 @@ const AUTH_USE_CASES = [
   CheckSessionUseCase,
 ];
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([UserSchema]),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '7d' },
-    }),
-    PassportModule,
-  ],
+  imports: [TypeOrmModule.forFeature([UserSchema]), SharedModule],
   controllers: [AuthController],
   providers: [
     ...AUTH_USE_CASES,
     { provide: 'AuthRepository', useClass: AuthAdapter },
-    { provide: 'TokenRepository', useClass: JwtTokenAdapter },
     { provide: 'BcryptRepository', useClass: BcryptAdapter },
     { provide: 'MailRepository', useClass: MailAdapter },
   ],
-  exports: [JwtModule],
+  exports: [],
 })
 export class AuthModule {}

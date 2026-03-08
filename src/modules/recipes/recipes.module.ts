@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { SharedModule } from 'src/shared/shared.module';
 import { GenerateRecipeInstanceUseCase } from './application/use-cases/generate-recipe-instance.use-case';
 import { RemoveRecipeUseCase } from './application/use-cases/remove-recipe.use-case';
 import { SaveRecipeUseCase } from './application/use-cases/save-recipe.use-case';
@@ -12,7 +13,7 @@ const RECIPE_USE_CASES = [
   GenerateRecipeInstanceUseCase,
 ];
 @Module({
-  imports: [TypeOrmModule.forFeature([RecipeSchema])],
+  imports: [TypeOrmModule.forFeature([RecipeSchema]), SharedModule],
   controllers: [RecipesController],
   providers: [
     ...RECIPE_USE_CASES,

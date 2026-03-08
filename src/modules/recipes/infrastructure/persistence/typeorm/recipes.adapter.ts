@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RecipesRepository } from 'src/modules/recipes/domain/ports/recipes.repository';
 import { RecipeEntity } from 'src/shared/domain/entities/recipe.entity';
+import type { TokenRepository } from 'src/shared/domain/ports/token.repository';
 import { RecipeMapper } from 'src/shared/infrastructure/persistence/recipe.mapper';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid'; // Import uuid v4
@@ -12,6 +13,8 @@ export class RecipeAdapter implements RecipesRepository {
   constructor(
     @InjectRepository(RecipeSchema)
     private readonly recipeRepository: Repository<RecipeSchema>,
+    @Inject('TokenRepository')
+    private readonly tokenRepository: TokenRepository,
   ) {}
 
   async saveRecipe(

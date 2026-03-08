@@ -9,7 +9,7 @@ import { AiModule } from './modules/AI/ai.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ListsModule } from './modules/lists/lists.module';
 import { RecipesModule } from './modules/recipes/recipes.module';
-import { JwtStrategy } from './shared/infrastructure/strategies/jwt.strategy';
+import { SharedModule } from './shared/shared.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,9 +25,11 @@ import { JwtStrategy } from './shared/infrastructure/strategies/jwt.strategy';
     AuthModule,
     AiModule,
     RecipesModule,
+    SharedModule,
     ListsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, JwtStrategy],
+  providers: [AppService],
+  exports: [],
 })
 export class AppModule {}
