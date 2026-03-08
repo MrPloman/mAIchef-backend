@@ -13,7 +13,6 @@ import { BcryptAdapter } from './infrastructure/adapters/bcrypt.adapter';
 import { MailAdapter } from './infrastructure/adapters/mail.adapter';
 import { AuthController } from './infrastructure/controllers/auth.controller';
 import { UserSchema } from './infrastructure/persistence/typeorm/user.schema';
-import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
 const AUTH_USE_CASES = [
   LoginUseCase,
   RegisterUseCase,
@@ -32,7 +31,6 @@ const AUTH_USE_CASES = [
   ],
   controllers: [AuthController],
   providers: [
-    JwtStrategy,
     ...AUTH_USE_CASES,
     { provide: 'AuthRepository', useClass: AuthAdapter },
     { provide: 'TokenRepository', useClass: JwtTokenAdapter },
