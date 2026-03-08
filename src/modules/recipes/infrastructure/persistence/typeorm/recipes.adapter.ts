@@ -36,7 +36,7 @@ export class RecipeAdapter implements RecipesRepository {
       userId: userId,
     });
     if (!foundRecipes || foundRecipes.length === 0) {
-      throw new HttpException('No recipes found.', HttpStatus.CONFLICT);
+      return [];
     }
 
     return foundRecipes;
@@ -58,7 +58,6 @@ export class RecipeAdapter implements RecipesRepository {
     if (!foundRecipe) {
       throw new HttpException('No recipe found.', HttpStatus.CONFLICT);
     }
-
     return foundRecipe;
   }
 
@@ -102,6 +101,29 @@ export class RecipeAdapter implements RecipesRepository {
       throw new NotFoundException('Recipe Not Found');
     }
     return true;
+  }
+
+  async updateRecipe(recipe: RecipeEntity, userId: string, token: string) {
+    const _recipe = RecipeMapper.fromDomaintoSchema({
+      ...recipe,
+      userId: userId,
+    });
+
+    const _token = this.tokenRepository.verify(token);
+    if (!_token || _token.id !== userId) {
+      throw new UnauthorizedException();
+    }
+    const foundRecipe = await this.recipeRepository.findOneBy({
+      _id: recipe._id,
+      userId: userId,
+    });
+    if (!foundRecipe) {
+      throw new HttpException('Recipe Not Found', HttpStatus.NOT_FOUND);
+    }
+
+    this.recipeRepository.merge(foundRecipe, _recipe);
+
+    return this.recipeRepository.save(_recipe);
   }
 
   async generateRecipeInstance(recipe: RecipeEntity): Promise<RecipeSchema> {
