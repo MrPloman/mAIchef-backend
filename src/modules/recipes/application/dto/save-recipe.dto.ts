@@ -12,7 +12,7 @@ export class SaveRecipeDTO {
   @IsNotEmpty()
   @IsObject()
   @ValidateNested()
-  @Type(() => RecipeDTO) // <- apunta al DTO, no a la entidad
+  @Type(() => RecipeDTO)
   recipe!: RecipeDTO;
   @IsString()
   @IsUUID()

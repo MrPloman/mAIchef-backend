@@ -5,5 +5,7 @@ export interface AIRepository {
   getGeneratedRecipe(
     generateRecipePrompt: RecipePrompt,
   ): Promise<RecipeEntity[]>;
-  getReplannedRecipe(replannedRecipePrompt: RecipePrompt): Promise<any>;
+  getReplannedRecipe(
+    replannedRecipePrompt: RecipePrompt,
+  ): Promise<RecipeEntity>;
 }

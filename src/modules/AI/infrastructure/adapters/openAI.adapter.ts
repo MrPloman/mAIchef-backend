@@ -58,8 +58,10 @@ export class OpenAIAdapter implements AIRepository {
     });
   }
 
-  async getReplannedRecipe(replannedRecipePrompt: RecipePrompt): Promise<any> {
+  async getReplannedRecipe(
+    replannedRecipePrompt: RecipePrompt,
+  ): Promise<RecipeEntity> {
     // Logic for replanning goes here
-    return { message: 'Replanning logic not implemented yet' };
+    return;
   }
 }
