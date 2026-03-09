@@ -1,7 +1,6 @@
 import { Body, Controller, Headers, Post, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { GenerateRecipeInstanceUseCase } from 'src/modules/recipes/application/use-cases/generate-recipe-instance.use-case';
-import { SaveRecipeUseCase } from 'src/modules/recipes/application/use-cases/save-recipe.use-case';
 import { RecipeSchema } from 'src/modules/recipes/infrastructure/persistence/typeorm/recipe.schema';
 import { RecipeEntity } from 'src/shared/domain/entities/recipe.entity';
 import { RecipeMapper } from 'src/shared/infrastructure/persistence/recipe.mapper';
@@ -16,9 +15,7 @@ export class AIController {
   constructor(
     private readonly generateRecipeUseCase: PromptRecipeUseCase,
     private readonly replanRecipeUseCase: ReplanRecipeUseCase,
-    private readonly saveRecipeUseCase: SaveRecipeUseCase,
     private readonly getSavedRecipeUseCase: GetSavedRecipeUseCase,
-
     private readonly generateRecipeInstanceUseCase: GenerateRecipeInstanceUseCase,
   ) {}
   @Post('generate')
@@ -44,11 +41,13 @@ export class AIController {
       body.recipeId,
       token,
     );
-    const response = await this.replanRecipeUseCase.execute({
+    const repplanedRecipe = await this.replanRecipeUseCase.execute({
       prompt: body.prompt,
       userId: body.userId,
       recipe: RecipeMapper.fromSchematoDomain(_recipe),
     });
-    return res.json(response);
+    const recipeParsed =
+      await this.generateRecipeInstanceUseCase.execute(repplanedRecipe);
+    return res.json(recipeParsed);
   }
 }

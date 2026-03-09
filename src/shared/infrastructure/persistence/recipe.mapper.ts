@@ -57,7 +57,6 @@ export class RecipeMapper {
       };
       return _step as any as RecipeStep;
     });
-
     return new RecipeEntity(
       AIData._id,
       AIData.version,
@@ -154,6 +153,7 @@ export class RecipeMapper {
 
     const schema: Partial<RecipeSchema> = {
       title: recipe.title,
+      version: recipe.version,
       description: recipe.description,
       difficulty: difficultyValue,
       estimatedTimeInMinutes: recipe.estimatedTimeInMinutes,

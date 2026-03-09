@@ -5,6 +5,7 @@ import { maxRecipes } from 'src/shared/constants';
 import { RecipeEntity } from 'src/shared/domain/entities/recipe.entity';
 import { RecipeMapper } from 'src/shared/infrastructure/persistence/recipe.mapper';
 import z from 'zod';
+import { ReplanRecipe } from '../../application/dto/replan-recipe.dto';
 import { RecipePrompt } from '../../domain/models/recipe-prompt.model';
 import { AIRepository } from '../../domain/ports/ai.repository';
 import { recipeSchema } from '../schemas/openAI.schema';
@@ -59,9 +60,31 @@ export class OpenAIAdapter implements AIRepository {
   }
 
   async getReplannedRecipe(
-    replannedRecipePrompt: RecipePrompt,
+    replannedRecipePrompt: ReplanRecipe,
   ): Promise<RecipeEntity> {
-    // Logic for replanning goes here
-    return;
+    const { systemMessage, userMessage } =
+      this.getOpenAIConfig.getReplanPromptTemplate(replannedRecipePrompt);
+    const model = this.getOpenAIConfig.getModel();
+    const response = await this.openai.chat.completions.create({
+      model: model,
+      messages: [
+        { role: 'system', content: systemMessage },
+        {
+          role: 'user',
+          content: `${userMessage}\n\nIMPORTANT: You must respond with valid JSON only. No explanations, no apologies, no extra text. Just the JSON.`,
+        },
+      ],
+      // max_completion_tokens: 1500,
+      response_format: { type: 'json_object' },
+    });
+    const content = response.choices[0].message.content;
+
+    if (!content) {
+      throw new Error('OpenAI returned empty content');
+    }
+
+    // Parse el JSON manualmente
+    const parsedData = JSON.parse(content);
+    return RecipeMapper.fromAIToDomain(parsedData);
   }
 }

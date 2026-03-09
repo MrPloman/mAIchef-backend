@@ -9,6 +9,6 @@ export class ReplanRecipeUseCase {
     private readonly aiRepository: AIRepository,
   ) {}
   async execute(body: ReplanRecipe): Promise<RecipeEntity> {
-    return this.aiRepository.getReplannedRecipe(body);
+    return await this.aiRepository.getReplannedRecipe(body);
   }
 }
