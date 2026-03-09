@@ -12,6 +12,7 @@ import {
 import type { Response } from 'express';
 import { JwtAuthGuard } from 'src/shared/infrastructure/guards/jwt-auth.guard';
 import { RecipeMapper } from 'src/shared/infrastructure/persistence/recipe.mapper';
+import { GetRecipeInformationDTO } from '../../application/dto/get-recipe-information.dto';
 import { RemoveRecipeDTO } from '../../application/dto/remove-recipe.dto';
 import { SaveRecipeDTO } from '../../application/dto/save-recipe.dto';
 import { GetSavedRecipeUseCase } from '../../application/use-cases/get-saved-recipe.use-case';
@@ -30,7 +31,7 @@ export class RecipesController {
     private readonly getSavedRecipeUseCase: GetSavedRecipeUseCase,
   ) {}
   @UseGuards(JwtAuthGuard)
-  @Post('save-recipe')
+  @Post('recipe')
   public async saveRecipe(
     @Body() body: SaveRecipeDTO,
     @Headers('authorization') auth: string,
@@ -78,7 +79,7 @@ export class RecipesController {
   @UseGuards(JwtAuthGuard)
   @Get('recipe')
   public async getUserRecipe(
-    @Body() body: { userId: string; recipeId: string },
+    @Body() body: GetRecipeInformationDTO,
     @Headers('authorization') auth: string,
     @Res() res: Response,
   ) {
@@ -88,7 +89,7 @@ export class RecipesController {
       body.recipeId,
       token,
     );
-    res.json({ recipes: response });
+    res.json(response);
   }
   @UseGuards(JwtAuthGuard)
   @Put('recipe')

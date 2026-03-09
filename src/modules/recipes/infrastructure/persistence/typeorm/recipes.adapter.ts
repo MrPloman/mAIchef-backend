@@ -43,8 +43,8 @@ export class RecipeAdapter implements RecipesRepository {
   }
 
   async getRecipe(
-    recipeId: string,
     userId: string,
+    recipeId: string,
     token: string,
   ): Promise<RecipeSchema> {
     const _token = this.tokenRepository.verify(token);
