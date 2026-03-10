@@ -5,10 +5,12 @@ export class ListMapper {
   static toDomain(schema: ListSchema): List {
     return new List(
       schema.id,
+      schema.title,
       schema.userId,
       schema.recipeIds || [],
       schema.createdAt,
       schema.updatedAt,
+      schema.description,
     );
   }
 
