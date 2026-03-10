@@ -1,4 +1,11 @@
-import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Headers,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import type { Response } from 'express';
 import { JwtAuthGuard } from 'src/shared/infrastructure/guards/jwt-auth.guard';
 import { CreateListDTO } from '../../application/dto/create-list.dto';
@@ -9,8 +16,12 @@ export class ListsController {
   constructor(private readonly createListUseCase: CreateListUseCase) {}
   @UseGuards(JwtAuthGuard)
   @Post('list')
-  public async register(@Body() body: CreateListDTO, @Res() res: Response) {
-    const token = '';
+  public async register(
+    @Body() body: CreateListDTO,
+    @Headers('authorization') auth: string,
+    @Res() res: Response,
+  ) {
+    const token = auth?.replace('Bearer ', '');
     const response = await this.createListUseCase.execute(body, token);
     res.json(response);
   }
