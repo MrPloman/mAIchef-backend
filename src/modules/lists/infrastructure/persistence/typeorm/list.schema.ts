@@ -16,7 +16,7 @@ export class ListSchema {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ name: 'title', type: 'string', default: '' })
+  @Column({ name: 'title', type: 'varchar', default: '' })
   title!: string;
 
   @Column({ name: 'user_id', type: 'uuid', unique: true })
@@ -35,6 +35,6 @@ export class ListSchema {
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt!: Date;
 
-  @Column({ name: 'description', type: 'string', default: '' })
+  @Column({ name: 'description', type: 'varchar', default: '' })
   description!: string;
 }

@@ -1,12 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CreateListUseCase } from './application/use-cases/create-list.use-case';
+import { ListAdapter } from './infrastructure/adapters/list.adapter';
+import { ListsController } from './infrastructure/controllers/lists.controller';
 import { ListSchema } from './infrastructure/persistence/typeorm/list.schema';
-import { ListsController } from './lists.controller';
-import { ListsService } from './lists.service';
-
+const LISTS_USE_CASES = [CreateListUseCase];
 @Module({
   imports: [TypeOrmModule.forFeature([ListSchema])],
-  providers: [ListsService],
+  providers: [
+    ...LISTS_USE_CASES,
+    { provide: 'ListRepository', useClass: ListAdapter },
+  ],
   controllers: [ListsController],
   exports: [TypeOrmModule],
 })
