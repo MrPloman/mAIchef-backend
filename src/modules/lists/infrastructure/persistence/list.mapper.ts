@@ -6,7 +6,7 @@ export class ListMapper {
     return new List(
       schema.id,
       schema.title,
-      schema.userId,
+      schema.userId ?? '',
       schema.recipeIds || [],
       schema.createdAt,
       schema.updatedAt,

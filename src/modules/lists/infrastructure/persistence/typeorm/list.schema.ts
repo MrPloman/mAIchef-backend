@@ -1,17 +1,15 @@
+import { UserSchema } from 'src/modules/auth/infrastructure/persistence/typeorm/user.schema';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserSchema } from '../../../../auth/infrastructure/persistence/typeorm/user.schema';
 
 @Entity('lists')
-@Index(['userId'], { unique: true }) // ⬅️ Un usuario solo puede tener UNA lista
 export class ListSchema {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
@@ -19,12 +17,12 @@ export class ListSchema {
   @Column({ name: 'title', type: 'varchar', default: '' })
   title!: string;
 
-  @Column({ name: 'user_id', type: 'uuid', unique: true })
-  userId!: string;
+  @Column({ name: 'user_id', type: 'uuid', nullable: false })
+  userId?: string;
 
-  @ManyToOne(() => UserSchema)
+  @ManyToOne(() => UserSchema, { nullable: false })
   @JoinColumn({ name: 'user_id' })
-  user!: UserSchema;
+  user?: UserSchema;
 
   @Column({ name: 'recipe_ids', type: 'jsonb', default: '[]' })
   recipeIds!: string[];

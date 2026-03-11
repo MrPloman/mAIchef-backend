@@ -20,8 +20,7 @@ export class ListAdapter implements ListRepository {
     if (!_token || _token.id !== list.userId) {
       throw new UnauthorizedException();
     }
-    const listCreated = await this.listRepository.create(list);
 
-    return await this.listRepository.save(listCreated);
+    return await this.listRepository.save(list);
   }
 }
