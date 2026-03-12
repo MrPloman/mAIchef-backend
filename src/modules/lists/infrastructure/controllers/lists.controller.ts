@@ -15,7 +15,7 @@ import { CreateListDTO } from '../../application/dto/create-list.dto';
 import { RemoveListDTO } from '../../application/dto/remove-list.dto';
 import { RemoveRecipeFromListDTO } from '../../application/dto/remove-recipe-from-list.dto';
 import { UpdateListDTO } from '../../application/dto/update-list.dto';
-import { AddRecipeToListUseCase } from '../../application/use-cases/add-recipe-to-list.dto';
+import { AddRecipeToListUseCase } from '../../application/use-cases/add-recipe-to-list.use-case';
 import { CreateListUseCase } from '../../application/use-cases/create-list.use-case';
 import { RemoveListUseCase } from '../../application/use-cases/remove-list.use-case';
 import { RemoveRecipeFromListUseCase } from '../../application/use-cases/remove-recipe-from-list.use-case';
