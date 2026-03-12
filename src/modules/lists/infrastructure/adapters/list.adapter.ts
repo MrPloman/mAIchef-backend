@@ -1,8 +1,17 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { TokenRepository } from 'src/shared/domain/ports/token.repository';
 import { Repository } from 'typeorm';
+import { AddRecipeToListDTO } from '../../application/dto/add-recipe-to-list.dto';
 import { CreateListDTO } from '../../application/dto/create-list.dto';
+import { RemoveListDTO } from '../../application/dto/remove-list.dto';
+import { RemoveRecipeFromListDTO } from '../../application/dto/remove-recipe-from-list.dto';
+import { UpdateListDTO } from '../../application/dto/update-list.dto';
 import type { ListRepository } from '../../domain/ports/list.repository';
 import { ListSchema } from '../persistence/typeorm/list.schema';
 
@@ -15,12 +24,60 @@ export class ListAdapter implements ListRepository {
     private readonly tokenRepository: TokenRepository,
   ) {}
 
-  async createList(list: CreateListDTO, token: string): Promise<any> {
+  async createList(list: CreateListDTO, token: string): Promise<ListSchema> {
     const _token = this.tokenRepository.verify(token);
     if (!_token || _token.id !== list.userId) {
       throw new UnauthorizedException();
     }
-
     return await this.listRepository.save(list);
+  }
+  async removeList(list: RemoveListDTO, token: string): Promise<boolean> {
+    const _token = this.tokenRepository.verify(token);
+    if (!_token || _token.id !== list.userId) {
+      throw new UnauthorizedException();
+    }
+    const schema = await this.listRepository.delete({ id: list.listId });
+    if (schema.affected === 0) {
+      throw new NotFoundException('Recipe Not Found');
+    }
+    return true;
+  }
+  async updateList(body: UpdateListDTO, token: string): Promise<ListSchema> {}
+  async addRecipeToList(
+    list: AddRecipeToListDTO,
+    token: string,
+  ): Promise<ListSchema> {
+    const _token = this.tokenRepository.verify(token);
+    if (!_token || _token.id !== list.userId) {
+      throw new UnauthorizedException();
+    }
+    const schema = await this.listRepository.findOneBy({ id: list.listId });
+    const _newSchema = {
+      ...schema,
+      recipeIds: schema?.recipeIds.filter(
+        (_id: string) => _id !== list.recipeId,
+      ),
+    };
+    return (await this.listRepository.update({ id: schema?.id }, _newSchema))
+      .raw;
+  }
+
+  async removeRecipeFromList(
+    list: RemoveRecipeFromListDTO,
+    token: string,
+  ): Promise<ListSchema> {
+    const _token = this.tokenRepository.verify(token);
+    if (!_token || _token.id !== list.userId) {
+      throw new UnauthorizedException();
+    }
+    const schema = await this.listRepository.findOneBy({ id: list.listId });
+    const _newSchema = {
+      ...schema,
+      recipeIds: schema?.recipeIds.filter(
+        (_id: string) => _id !== list.recipeId,
+      ),
+    };
+    return (await this.listRepository.update({ id: schema?.id }, _newSchema))
+      .raw;
   }
 }

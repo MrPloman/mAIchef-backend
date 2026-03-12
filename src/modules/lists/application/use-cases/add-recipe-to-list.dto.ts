@@ -2,16 +2,16 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import type { ListRepository } from '../../domain/ports/list.repository';
 import { ListSchema } from '../../infrastructure/persistence/typeorm/list.schema';
-import { CreateListDTO } from '../dto/create-list.dto';
+import { AddRecipeToListDTO } from '../dto/add-recipe-to-list.dto';
 
 @Injectable()
-export class CreateListUseCase {
+export class AddRecipeToListUseCase {
   constructor(
     @Inject('ListRepository')
     private readonly listRepository: ListRepository,
   ) {}
 
-  async execute(body: CreateListDTO, token: string): Promise<ListSchema> {
-    return await this.listRepository.createList(body, token);
+  async execute(body: AddRecipeToListDTO, token: string): Promise<ListSchema> {
+    return await this.listRepository.addRecipeToList(body, token);
   }
 }

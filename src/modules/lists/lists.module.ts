@@ -2,11 +2,21 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SharedModule } from 'src/shared/shared.module';
 import { BcryptAdapter } from '../auth/infrastructure/adapters/bcrypt.adapter';
+import { AddRecipeToListUseCase } from './application/use-cases/add-recipe-to-list.dto';
 import { CreateListUseCase } from './application/use-cases/create-list.use-case';
+import { RemoveListUseCase } from './application/use-cases/remove-list.use-case';
+import { RemoveRecipeFromListUseCase } from './application/use-cases/remove-recipe-from-list.use-case';
+import { UpdateListUseCase } from './application/use-cases/update-list.use-case';
 import { ListAdapter } from './infrastructure/adapters/list.adapter';
 import { ListsController } from './infrastructure/controllers/lists.controller';
 import { ListSchema } from './infrastructure/persistence/typeorm/list.schema';
-const LISTS_USE_CASES = [CreateListUseCase];
+const LISTS_USE_CASES = [
+  CreateListUseCase,
+  RemoveListUseCase,
+  AddRecipeToListUseCase,
+  RemoveRecipeFromListUseCase,
+  UpdateListUseCase,
+];
 @Module({
   imports: [TypeOrmModule.forFeature([ListSchema]), SharedModule],
   providers: [
