@@ -37,12 +37,26 @@ export class ListAdapter implements ListRepository {
       throw new UnauthorizedException();
     }
     const schema = await this.listRepository.delete({ id: list.listId });
-    if (schema.affected === 0) {
-      throw new NotFoundException('Recipe Not Found');
+    if (schema.affected === 0 || !schema) {
+      throw new NotFoundException('List Not Found');
     }
     return true;
   }
-  async updateList(body: UpdateListDTO, token: string): Promise<ListSchema> {}
+  async updateList(list: UpdateListDTO, token: string): Promise<ListSchema> {
+    const _token = this.tokenRepository.verify(token);
+    if (!_token || _token.id !== list.userId) {
+      throw new UnauthorizedException();
+    }
+    const schema = await this.listRepository.findOneBy({ id: list.listId });
+    if (!schema) throw new NotFoundException();
+    const _newSchema = {
+      ...schema,
+      title: list.title,
+      description: list.description ?? '',
+    };
+    return (await this.listRepository.update({ id: schema?.id }, _newSchema))
+      .raw;
+  }
   async addRecipeToList(
     list: AddRecipeToListDTO,
     token: string,
@@ -52,11 +66,10 @@ export class ListAdapter implements ListRepository {
       throw new UnauthorizedException();
     }
     const schema = await this.listRepository.findOneBy({ id: list.listId });
+    if (!schema) throw new NotFoundException();
     const _newSchema = {
       ...schema,
-      recipeIds: schema?.recipeIds.filter(
-        (_id: string) => _id !== list.recipeId,
-      ),
+      recipeIds: [...(schema?.recipeIds ?? []), list.recipeId],
     };
     return (await this.listRepository.update({ id: schema?.id }, _newSchema))
       .raw;
@@ -71,6 +84,8 @@ export class ListAdapter implements ListRepository {
       throw new UnauthorizedException();
     }
     const schema = await this.listRepository.findOneBy({ id: list.listId });
+    if (!schema) throw new NotFoundException();
+
     const _newSchema = {
       ...schema,
       recipeIds: schema?.recipeIds.filter(
