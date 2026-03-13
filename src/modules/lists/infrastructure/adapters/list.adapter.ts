@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Inject,
   Injectable,
   NotFoundException,
@@ -67,6 +68,10 @@ export class ListAdapter implements ListRepository {
     }
     const schema = await this.listRepository.findOneBy({ id: list.listId });
     if (!schema) throw new NotFoundException();
+    schema.recipeIds.forEach((recipeId: string) => {
+      if (recipeId === list.recipeId)
+        throw new ConflictException('Recipe already in the list');
+    });
     const _newSchema = {
       ...schema,
       recipeIds: [...(schema?.recipeIds ?? []), list.recipeId],
@@ -86,6 +91,11 @@ export class ListAdapter implements ListRepository {
     const schema = await this.listRepository.findOneBy({ id: list.listId });
     if (!schema) throw new NotFoundException();
 
+    if (
+      !schema.recipeIds.find((recipeId: string) => recipeId === list.recipeId)
+    ) {
+      throw new NotFoundException('Not found recipe!');
+    }
     const _newSchema = {
       ...schema,
       recipeIds: schema?.recipeIds.filter(
