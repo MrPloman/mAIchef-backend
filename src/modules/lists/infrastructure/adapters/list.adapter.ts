@@ -10,6 +10,7 @@ import type { TokenRepository } from 'src/shared/domain/ports/token.repository';
 import { Repository } from 'typeorm';
 import { AddRecipeToListDTO } from '../../application/dto/add-recipe-to-list.dto';
 import { CreateListDTO } from '../../application/dto/create-list.dto';
+import { GetAllUserListstDTO } from '../../application/dto/get-all-user-lists.dto';
 import { RemoveListDTO } from '../../application/dto/remove-list.dto';
 import { RemoveRecipeFromListDTO } from '../../application/dto/remove-recipe-from-list.dto';
 import { UpdateListDTO } from '../../application/dto/update-list.dto';
@@ -24,6 +25,17 @@ export class ListAdapter implements ListRepository {
     @Inject('TokenRepository')
     private readonly tokenRepository: TokenRepository,
   ) {}
+  async getAllUserLists(
+    body: GetAllUserListstDTO,
+    token: string,
+  ): Promise<ListSchema[]> {
+    const _token = this.tokenRepository.verify(token);
+    if (!_token || _token.id !== body.userId) {
+      throw new UnauthorizedException();
+    }
+    const lists = await this.listRepository.findBy({ userId: body.userId });
+    return lists;
+  }
 
   async createList(list: CreateListDTO, token: string): Promise<ListSchema> {
     const _token = this.tokenRepository.verify(token);
