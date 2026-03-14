@@ -55,8 +55,7 @@ export class ListAdapter implements ListRepository {
       title: list.title,
       description: list.description ?? '',
     };
-    return (await this.listRepository.update({ id: schema?.id }, _newSchema))
-      .raw;
+    return await this.listRepository.save(_newSchema);
   }
   async addRecipeToList(
     list: AddRecipeToListDTO,
@@ -76,8 +75,7 @@ export class ListAdapter implements ListRepository {
       ...schema,
       recipeIds: [...(schema?.recipeIds ?? []), list.recipeId],
     };
-    return (await this.listRepository.update({ id: schema?.id }, _newSchema))
-      .raw;
+    return await this.listRepository.save(_newSchema);
   }
 
   async removeRecipeFromList(
@@ -102,7 +100,6 @@ export class ListAdapter implements ListRepository {
         (_id: string) => _id !== list.recipeId,
       ),
     };
-    return (await this.listRepository.update({ id: schema?.id }, _newSchema))
-      .raw;
+    return await this.listRepository.save(_newSchema);
   }
 }
